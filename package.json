@@ -1,0 +1,19 @@
+{
+  "name": "type-safe-errors",
+  "version": "0.0.1",
+  "description": "Simple type-safe errors for TypeScript",
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wiktor-obrebski/type-safe-errors.git"
+  },
+  "author": "Wiktor Obrebski",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/wiktor-obrebski/type-safe-errors/issues"
+  },
+  "homepage": "https://github.com/wiktor-obrebski/type-safe-errors#readme"
+}
