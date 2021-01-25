@@ -50,6 +50,22 @@ class Ok<TValue> {
     return this as any;
   }
 
+  async asyncMap<U extends Result<unknown, unknown>, R>(
+    this: U,
+    mapper: OkMapper<U, Promise<R>>
+  ): Promise<MapResult<U, R>> {
+    if (this.isOk()) {
+      const newValue = await mapper(this.value as any);
+      if (isResult(newValue)) {
+        return newValue as any;
+      } else {
+        return Ok.of(newValue) as any;
+      }
+    }
+
+    return this as any;
+  }
+
   mapErr<U extends Result<unknown, unknown>, R>(
     this: U,
     _mapper: ErrMapper<U, R>
@@ -91,6 +107,13 @@ class Err<TError> {
     this: U,
     _mapper: OkMapper<U, R>
   ): MapResult<U, R> {
+    return this as any;
+  }
+
+  async asyncMap<U extends Result<unknown, unknown>, R>(
+    this: U,
+    mapper: OkMapper<U, Promise<R>>
+  ): Promise<MapResult<U, R>> {
     return this as any;
   }
 
