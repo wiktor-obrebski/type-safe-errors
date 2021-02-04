@@ -6,6 +6,7 @@ import {
   MapOkResult,
   ErrMapper,
   MapErrResult,
+  MapAnyErrResult,
   InferErr,
   AClass
 } from './result.d';
@@ -14,42 +15,34 @@ export { Ok, Err, Result };
 
 type Result<TValue, TError> = Ok<TValue> | Err<TError>;
 
-interface Ok<TValue> {
+interface Subresult {
+  map<U extends Result<unknown, unknown>, R>(
+    this: U,
+    mapper: OkMapper<U, R>
+  ): MapOkResult<U, R>;
+
+  mapErr<U extends Result<unknown, unknown>, R, E extends InferErr<U>>(
+    this: U,
+    ErrorClass: AClass<E>,
+    mapper: (err: E) => R
+  ): MapErrResult<U, R, E>;
+
+  mapAnyErr<U extends Result<unknown, unknown>, R>(
+    this: U,
+    mapper: ErrMapper<U, R>
+  ): MapAnyErrResult<U, R>;
+}
+
+interface Ok<TValue> extends Subresult {
   readonly __value: Promise<ResultWrapper<TValue>>;
 
   __brand: 'ok';
-
-  map<U extends Result<unknown, unknown>, R>(
-    this: U,
-    mapper: OkMapper<U, R>
-  ): MapOkResult<U, R>;
-
-  mapErr<U extends Result<unknown, unknown>, R>(
-    this: U,
-    mapper: ErrMapper<U, R>
-  ): MapErrResult<U, R>;
 }
 
-interface Err<TError> {
+interface Err<TError> extends Subresult {
   readonly __value: Promise<ResultWrapper<TError>>;
 
   __brand: 'err';
-
-  map<U extends Result<unknown, unknown>, R>(
-    this: U,
-    mapper: OkMapper<U, R>
-  ): MapOkResult<U, R>;
-
-  mapErr<U extends Result<unknown, unknown>, R>(
-    this: U,
-    mapper: ErrMapper<U, R>
-  ): MapErrResult<U, R>;
-
-  handle<U extends Result<unknown, unknown>, R, E extends InferErr<U>>(
-    this: U,
-    ErrorClass: AClass<E>,
-    handler: (err: E) => R
-  ): U;
 }
 
 const Result = {

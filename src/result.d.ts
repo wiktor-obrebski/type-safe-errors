@@ -1,6 +1,14 @@
 import { Result, Ok, Err } from './result';
 
-export { OkMapper, MapOkResult, ErrMapper, MapErrResult, InferErr, AClass };
+export {
+  OkMapper,
+  MapOkResult,
+  ErrMapper,
+  MapAnyErrResult,
+  MapErrResult,
+  InferErr,
+  AClass,
+};
 
 type InferOk<U extends Result<unknown, unknown>> = U extends Ok<infer T>
   ? T
@@ -21,7 +29,9 @@ type ResultOrOk<R> = R extends Result<unknown, unknown>
   ? R
   : Ok<PromiseValue<R>>;
 
-type ResultOrErr<R> = R extends Result<unknown, unknown>
+type ResultOrErr<R> = undefined extends R
+  ? never
+  : R extends Result<unknown, unknown>
   ? R
   : Err<PromiseValue<R>>;
 
@@ -31,13 +41,23 @@ type MapOkResult<U extends Result<unknown, unknown>, R> = U extends Ok<unknown>
     : ResultOrOk<R>
   : U;
 
-type MapErrResult<U extends Result<unknown, unknown>, R> = U extends Err<
+type MapAnyErrResult<U extends Result<unknown, unknown>, R> = U extends Err<
   unknown
 >
   ? R extends Promise<infer S>
     ? ResultOrErr<S>
     : ResultOrErr<R>
-  : never;
+  : U;
+
+type MapErrResult<U extends Result<unknown, unknown>, R, E> = U extends Err<
+  infer EUnion
+>
+  ? E extends EUnion
+    ? R extends Promise<infer S>
+      ? ResultOrErr<S>
+      : ResultOrErr<R>
+    : U
+  : U;
 
 type FilterOk<U extends Result<unknown, unknown>> = U extends Ok<unknown>
   ? U

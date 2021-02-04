@@ -4,6 +4,7 @@ import {
   MapOkResult,
   ErrMapper,
   MapErrResult,
+  MapAnyErrResult,
   InferErr,
   AClass,
 } from './result.d';
@@ -61,14 +62,36 @@ export class CommonResult<TErrorOrValue>
     return new CommonResult(newValWrapperPromise) as any;
   }
 
-  mapErr<U extends Result<unknown, unknown>, R>(
+  mapAnyErr<U extends Result<unknown, unknown>, R>(
     this: U,
     mapper: ErrMapper<U, R>
-  ): MapErrResult<U, R> {
+  ): MapAnyErrResult<U, R> {
     const newValWrapperPromise = getResultWrapper<TErrorOrValue>(this)
       .then(wrapper =>
         wrapper.isError ? mapper(wrapper.value as any) : wrapper.value
       )
+      .then(newValue => {
+        if (isResult(newValue)) {
+          return getResultWrapper(newValue);
+        } else {
+          return new ResultWrapper(newValue, true);
+        }
+      });
+    return new CommonResult(newValWrapperPromise) as any;
+  }
+
+  mapErr<U extends Result<unknown, unknown>, R, E extends InferErr<U>>(
+    this: U,
+    ErrorClass: AClass<E>,
+    mapper: (err: E) => R
+  ): MapErrResult<U, R, E> {
+    const newValWrapperPromise = getResultWrapper<TErrorOrValue>(this)
+      .then(wrapper => {
+        if (wrapper.isError && wrapper.value instanceof ErrorClass) {
+          return mapper(wrapper.value as any);
+        }
+        return wrapper.value;
+      })
       .then(newValue => {
         if (isResult(newValue)) {
           return getResultWrapper(newValue);
