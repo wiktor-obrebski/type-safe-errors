@@ -1,23 +1,6 @@
 import { Result, Ok, Err } from './result';
 
-export { combine };
-
-function combine<T extends readonly Result<unknown, unknown>[]>(
-  results: [...T]
-): Result<ExtractOkTypes<T>, ExtractErrTypes<T>[number]> {
-  const values = [];
-  for (const result of results) {
-    if (result.isErr()) {
-      return result as any;
-    } else if (result.isOk()) {
-      values.push(result.value);
-    } else {
-      throw new Error('Invalid arguments');
-    }
-  }
-
-  return Ok.of(values) as any;
-}
+export { ExtractOkTypes, ExtractErrTypes };
 
 // Given a list of Results, this extracts all the different `T` types from that list
 type ExtractOkTypes<T extends readonly Result<unknown, unknown>[]> = {
