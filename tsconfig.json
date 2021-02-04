@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "esModuleInterop": true,
+    "importHelpers": true,
+    "module": "commonjs",
+    "removeComments": true,
+    "sourceMap": true,
+    "strict": true,
+    "target": "es6",
+    "lib": ["es2019"],
+    "moduleResolution": "node",
+    "types": ["node", "mocha", "chai", "sinon-chai"],
+  },
+  "include": ["./src/**/*.ts"]
+}

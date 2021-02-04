@@ -4,7 +4,8 @@
   "description": "Simple type-safe errors for TypeScript",
   "main": "src/index.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "NODE_ENV=test mocha --ui tdd  src/**/*.test.ts",
+    "test:watch": "NODE_ENV=test mocha --ui tdd  src/**/*.test.ts --watch"
   },
   "repository": {
     "type": "git",
@@ -15,5 +16,12 @@
   "bugs": {
     "url": "https://github.com/wiktor-obrebski/type-safe-errors/issues"
   },
-  "homepage": "https://github.com/wiktor-obrebski/type-safe-errors#readme"
+  "homepage": "https://github.com/wiktor-obrebski/type-safe-errors#readme",
+  "devDependencies": {
+    "@types/chai": "^4.2.14",
+    "@types/mocha": "^8.2.0",
+    "chai": "^4.2.0",
+    "mocha": "^8.2.1",
+    "ts-node": "^9.1.1"
+  }
 }
