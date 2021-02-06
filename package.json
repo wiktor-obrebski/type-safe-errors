@@ -26,15 +26,17 @@
   ],
   "homepage": "https://github.com/wiktor-obrebski/type-safe-errors#readme",
   "devDependencies": {
-    "@types/chai": "^4.2.14",
-    "@types/mocha": "^8.2.0",
+    "@types/chai": "^4.2.7",
+    "@types/mocha": "^5.2.7",
     "chai": "^4.2.0",
     "mocha": "^8.2.1",
     "ts-node": "^9.1.1",
-    "typescript": "^4.1.3"
+    "tslib": "^2.1.0"
   },
   "files": [
-    "dist/**/*",
-    "src/*"
-  ]
+    "dist/**/*"
+  ],
+  "dependencies": {
+    "typescript": "^4.1.3"
+  }
 }
