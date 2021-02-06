@@ -1,5 +1,9 @@
 {
   "compilerOptions": {
+    "target": "es5",
+    "declaration": true,
+    "outDir": "./dist",
+
     "baseUrl": ".",
     "esModuleInterop": true,
     "importHelpers": true,
@@ -7,10 +11,10 @@
     "removeComments": true,
     "sourceMap": true,
     "strict": true,
-    "target": "es6",
     "lib": ["es2019"],
     "moduleResolution": "node",
-    "types": ["node", "mocha", "chai", "sinon-chai"],
+    "types": ["node", "mocha", "chai", "sinon-chai"]
   },
-  "include": ["./src/**/*.ts"]
+  "include": ["./src/**/*.ts"],
+  "exclude": ["node_modules", "./src/test/**/*"]
 }

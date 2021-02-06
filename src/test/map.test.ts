@@ -14,6 +14,8 @@ class Error4 {
   __brand!: 'Error4';
 }
 
+// TODO: handle case when `map`/`mapErr`/`combine` throw real exception
+
 suite('Result map of single Ok result', () => {
   const result = Ok.of(5);
 
