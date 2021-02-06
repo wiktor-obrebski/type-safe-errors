@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es6",
     "declaration": true,
     "outDir": "./dist",
 
@@ -13,8 +13,7 @@
     "strict": true,
     "lib": ["es2019"],
     "moduleResolution": "node",
-    "types": ["node", "mocha", "chai", "sinon-chai"]
+    "types": ["mocha", "chai"]
   },
-  "include": ["./src/**/*.ts"],
-  "exclude": ["node_modules", "./src/test/**/*"]
+  "include": ["./src/**/*.ts"]
 }
