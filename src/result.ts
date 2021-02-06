@@ -15,6 +15,18 @@ export { Ok, Err, Result };
 
 type Result<TValue, TError> = Ok<TValue> | Err<TError>;
 
+interface Ok<TValue> extends Subresult {
+  readonly __value: Promise<ResultWrapper<TValue>>;
+
+  __brand: 'ok';
+}
+
+interface Err<TError> extends Subresult {
+  readonly __value: Promise<ResultWrapper<TError>>;
+
+  __brand: 'err';
+}
+
 interface Subresult {
   map<U extends Result<unknown, unknown>, R>(
     this: U,
@@ -31,18 +43,6 @@ interface Subresult {
     this: U,
     mapper: ErrMapper<U, R>
   ): MapAnyErrResult<U, R>;
-}
-
-interface Ok<TValue> extends Subresult {
-  readonly __value: Promise<ResultWrapper<TValue>>;
-
-  __brand: 'ok';
-}
-
-interface Err<TError> extends Subresult {
-  readonly __value: Promise<ResultWrapper<TError>>;
-
-  __brand: 'err';
 }
 
 const Result = {

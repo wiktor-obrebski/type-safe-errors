@@ -5,7 +5,7 @@
   "main": "src/index.ts",
   "scripts": {
     "test": "NODE_ENV=test mocha --ui tdd  src/**/*.test.ts",
-    "test:watch": "NODE_ENV=test mocha --ui tdd  src/**/*.test.ts --watch"
+    "test:watch": "NODE_ENV=test mocha --ui tdd  src/test/*.test.ts --watch"
   },
   "repository": {
     "type": "git",
