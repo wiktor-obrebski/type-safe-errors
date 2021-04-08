@@ -15,5 +15,6 @@
     "moduleResolution": "node",
     "types": ["mocha", "chai"]
   },
-  "include": ["./src/**/*.ts"]
+  "include": ["./src/**/*.ts"],
+  "exclude": ["./src/test"]
 }

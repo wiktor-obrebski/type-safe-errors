@@ -1,13 +1,8 @@
-import { Result, Ok, Err } from './result';
 import {
-  OkMapper,
-  MapOkResult,
-  ErrMapper,
-  MapErrResult,
-  MapAnyErrResult,
-  InferErr,
-  AClass,
-} from './result.d';
+  Result, AClass,
+  Ok, OkMapper, MapOkResult,
+  Err, ErrMapper, MapErrResult, MapAnyErrResult, InferErr
+} from './result-helpers';
 import { ResultWrapper } from './result-wrapper';
 
 export class CommonResult<TErrorOrValue>
@@ -102,29 +97,29 @@ export class CommonResult<TErrorOrValue>
     return new CommonResult(newValWrapperPromise) as any;
   }
 
-  handle<U extends Result<unknown, unknown>, R, E extends InferErr<U>>(
-    this: U,
-    ErrorClass: AClass<E>,
-    handler: (err: E) => R
-  ): U {
-    const newResultPromise = getResultWrapper<TErrorOrValue>(this).then(
-      wrapper => {
-        if (wrapper.isError && wrapper.value instanceof ErrorClass) {
-          handler(wrapper.value as any);
-        }
-        return { ...wrapper } as any;
-      }
-    );
-    return new CommonResult(newResultPromise) as any;
-  }
+  // handle<U extends Result<unknown, unknown>, R, E extends InferErr<U>>(
+  //   this: U,
+  //   ErrorClass: AClass<E>,
+  //   handler: (err: E) => R
+  // ): U {
+  //   const newResultPromise = getResultWrapper<TErrorOrValue>(this).then(
+  //     wrapper => {
+  //       if (wrapper.isError && wrapper.value instanceof ErrorClass) {
+  //         handler(wrapper.value as any);
+  //       }
+  //       return { ...wrapper } as any;
+  //     }
+  //   );
+  //   return new CommonResult(newResultPromise) as any;
+  // }
 
-  promise(): Promise<TErrorOrValue | never> {
-    return getResultWrapper<TErrorOrValue>(this).then(wrapper =>
-      wrapper.isError
-        ? Promise.reject(wrapper.value)
-        : Promise.resolve(wrapper.value)
-    );
-  }
+  // promise(): Promise<TErrorOrValue | never> {
+  //   return getResultWrapper<TErrorOrValue>(this).then(wrapper =>
+  //     wrapper.isError
+  //       ? Promise.reject(wrapper.value)
+  //       : Promise.resolve(wrapper.value)
+  //   );
+  // }
 }
 
 function getResultWrapper<TErrorOrValue>(result: Result<unknown, unknown>) {

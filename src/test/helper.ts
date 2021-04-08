@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { Result } from '../result';
+import { Result } from '../result.d';
 
 export { shouldEventuallyOk, shouldEventuallyErr };
 
