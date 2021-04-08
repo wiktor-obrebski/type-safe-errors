@@ -1,10 +1,10 @@
 import { expect } from 'chai';
-import { Result } from '../result.d';
+import { Types } from '../index';
 
 export { shouldEventuallyOk, shouldEventuallyErr };
 
 async function shouldEventuallyOk<TValue>(
-  result: Result<unknown, unknown>,
+  result: Types.Result<unknown, unknown>,
   value: TValue,
   done: (err?: any) => void
 ) {
@@ -23,7 +23,7 @@ async function shouldEventuallyOk<TValue>(
 }
 
 async function shouldEventuallyErr<TValue>(
-  result: Result<unknown, unknown>,
+  result: Types.Result<unknown, unknown>,
   value: TValue,
   done: (err?: any) => void
 ) {
