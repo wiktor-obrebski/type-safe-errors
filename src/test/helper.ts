@@ -1,10 +1,10 @@
 import { expect } from 'chai';
-import { Types } from '../index';
+import { Result } from '../result-helpers';
 
 export { shouldEventuallyOk, shouldEventuallyErr };
 
 async function shouldEventuallyOk<TValue>(
-  result: Types.Result<unknown, unknown>,
+  result: Result<unknown, unknown>,
   value: TValue,
   done: (err?: any) => void
 ) {
@@ -14,7 +14,7 @@ async function shouldEventuallyOk<TValue>(
     done(`Ok result expected (${value}), got Err result`);
   } else {
     try {
-      expect(wrapper.value).to.equal(value);
+      expect(wrapper.value).to.deep.equal(value);
       done();
     } catch (err) {
       done(err);
@@ -23,7 +23,7 @@ async function shouldEventuallyOk<TValue>(
 }
 
 async function shouldEventuallyErr<TValue>(
-  result: Types.Result<unknown, unknown>,
+  result: Result<unknown, unknown>,
   value: TValue,
   done: (err?: any) => void
 ) {

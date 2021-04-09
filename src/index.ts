@@ -1,10 +1,12 @@
-export { Result, Ok, Err } from './result';
-import type { Result as ResType, Ok as OkType, Err as ErrType } from './result-helpers';
+// aliasing is to re-export types and factory values on same names
+import type { Result as ResultType, Ok as OkType, Err as ErrType } from './result-helpers';
+import { Result as ResultVal, Ok as OkVal, Err as ErrVal } from './result';
 
-// the types are exported just in case. I think they should not be used directly,
-// only as results of `Ok.of`, `Err.of` etc.
-export namespace Types {
-  export type Result<TValue, TError> = ResType<TValue, TError>;
-  export type Ok<TValue> = OkType<TValue>;
-  export type Err<TError> = ErrType<TError>;
-}
+export const Result = ResultVal;
+export type Result<TValue, TError> = ResultType<TValue, TError>;
+
+export const Ok = OkVal;
+export type Ok<TValue> = OkType<TValue>;
+
+export const Err = ErrVal;
+export type Err<TError> = ErrType<TError>;

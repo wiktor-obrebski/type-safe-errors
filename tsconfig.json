@@ -13,7 +13,7 @@
     "strict": true,
     "lib": ["es2019"],
     "moduleResolution": "node",
-    "types": ["mocha", "chai"]
+    "types": ["mocha", "chai", "node"]
   },
   "include": ["./src/**/*.ts"],
   "exclude": ["./src/test"]
