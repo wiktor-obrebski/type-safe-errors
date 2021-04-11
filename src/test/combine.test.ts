@@ -14,14 +14,6 @@ class Error4 {
   __brand!: 'Error4';
 }
 
-/**
- * The idea is to directly type specific operation results by expected type.
- * Thanks to do this the tests not only fail if runtime code has a bug, but they
- * won't compile in case of new bug introduction to lib typings
- */
-
-// TODO: handle case when `map`/`mapErr`/`combine` throw real exception
-
 test('Result combine of two Ok values result returns Ok result of array of two values', (done) => {
   const mapped: Result<['test-return1', 'test-return2'], never> = Result.combine([
     Ok.of('test-return1' as const),

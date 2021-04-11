@@ -2,7 +2,7 @@ import { ResultWrapper } from './result-wrapper';
 
 export {
   Result, AClass,
-  Ok, OkMapper, MapOkResult,
+  Ok, OkMapper, MapOkResult, InferOk,
   Err, ErrMapper, MapErrResult, MapAnyErrResult, InferErr,
 };
 
@@ -36,6 +36,8 @@ interface Subresult {
     this: U,
     mapper: ErrMapper<U, R>
   ): MapAnyErrResult<U, R>;
+
+  promise<U extends Result<unknown, unknown>>(this: U): Promise<InferOk<U> | never>;
 }
 
 type OkMapper<U extends Result<unknown, unknown>, R> = (value: InferOk<U>) => R;
