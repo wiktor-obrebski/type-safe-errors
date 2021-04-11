@@ -54,3 +54,20 @@ test('Result combine of mixed Result values returns single Err or list of values
 
   shouldEventuallyErr(mapped, err, done);
 });
+
+test('Result combine of mixed types per Result returns expected result', (done) => {
+
+  const a1 = Math.random() > 0.5 ? Ok.of(6) : Err.of(new Error1());
+  const zaza = Result.combine([a1, Ok.of(6)]).map(([ala, beka]) => {
+    console.log(ala, beka);
+  });
+
+  const mixedResult1 = Ok.of("return-type") as Err<Error1> | Ok<"return-type">;
+
+  const mapped: Result<["return-type", number], Error1> = Result.combine([
+    mixedResult1,
+    Ok.of(5)
+  ]);
+
+  shouldEventuallyOk(mapped, ["return-type", 5], done);
+});

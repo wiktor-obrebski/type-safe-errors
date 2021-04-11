@@ -8,13 +8,13 @@ export {
 
 type Result<TValue, TError> = Ok<TValue> | Err<TError>;
 
-interface Ok<TValue> extends Subresult {
+type Ok<TValue> = Subresult & {
   readonly __value: Promise<ResultWrapper<TValue>>;
 
   __brand: 'ok';
 }
 
-interface Err<TError> extends Subresult {
+type Err<TError> = Subresult & {
   readonly __value: Promise<ResultWrapper<TError>>;
 
   __brand: 'err';
