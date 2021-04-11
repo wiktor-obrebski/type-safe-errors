@@ -1,9 +1,17 @@
 import { ResultWrapper } from './result-wrapper';
 
 export {
-  Result, AClass,
-  Ok, OkMapper, MapOkResult, InferOk,
-  Err, ErrMapper, MapErrResult, MapAnyErrResult, InferErr,
+  Result,
+  AClass,
+  Ok,
+  OkMapper,
+  MapOkResult,
+  InferOk,
+  Err,
+  ErrMapper,
+  MapErrResult,
+  MapAnyErrResult,
+  InferErr,
 };
 
 type Result<TValue, TError> = Ok<TValue> | Err<TError>;
@@ -12,13 +20,13 @@ type Ok<TValue> = Subresult & {
   readonly __value: Promise<ResultWrapper<TValue>>;
 
   __brand: 'ok';
-}
+};
 
 type Err<TError> = Subresult & {
   readonly __value: Promise<ResultWrapper<TError>>;
 
   __brand: 'err';
-}
+};
 
 interface Subresult {
   map<U extends Result<unknown, unknown>, R>(
@@ -37,7 +45,9 @@ interface Subresult {
     mapper: ErrMapper<U, R>
   ): MapAnyErrResult<U, R>;
 
-  promise<U extends Result<unknown, unknown>>(this: U): Promise<InferOk<U> | never>;
+  promise<U extends Result<unknown, unknown>>(
+    this: U
+  ): Promise<InferOk<U> | never>;
 }
 
 type OkMapper<U extends Result<unknown, unknown>, R> = (value: InferOk<U>) => R;
@@ -72,9 +82,10 @@ type ResultOrErr<R> = undefined extends R
   ? R
   : Err<PromiseValue<R>>;
 
-type MapAnyErrResult<U extends Result<unknown, unknown>, R> = U extends Err<
-  unknown
->
+type MapAnyErrResult<
+  U extends Result<unknown, unknown>,
+  R
+> = U extends Err<unknown>
   ? R extends Promise<infer S>
     ? ResultOrErr<S>
     : ResultOrErr<R>

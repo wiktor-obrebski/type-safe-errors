@@ -1,7 +1,15 @@
 import {
-  Result, AClass,
-  Ok, OkMapper, MapOkResult, InferOk,
-  Err, ErrMapper, MapErrResult, MapAnyErrResult, InferErr
+  Result,
+  AClass,
+  Ok,
+  OkMapper,
+  MapOkResult,
+  InferOk,
+  Err,
+  ErrMapper,
+  MapErrResult,
+  MapAnyErrResult,
+  InferErr,
 } from './result-helpers';
 import { ResultWrapper } from './result-wrapper';
 
@@ -41,7 +49,7 @@ export class CommonResult<TErrorOrValue>
     mapper: OkMapper<U, R>
   ): MapOkResult<U, R> {
     const newValWrapperPromise = getResultWrapper<TErrorOrValue>(this).then(
-      async wrapper => {
+      async (wrapper) => {
         if (wrapper.isError) {
           return wrapper;
         }
@@ -62,10 +70,10 @@ export class CommonResult<TErrorOrValue>
     mapper: ErrMapper<U, R>
   ): MapAnyErrResult<U, R> {
     const newValWrapperPromise = getResultWrapper<TErrorOrValue>(this)
-      .then(wrapper =>
+      .then((wrapper) =>
         wrapper.isError ? mapper(wrapper.value as any) : wrapper.value
       )
-      .then(newValue => {
+      .then((newValue) => {
         if (isResult(newValue)) {
           return getResultWrapper(newValue);
         } else {
@@ -81,13 +89,13 @@ export class CommonResult<TErrorOrValue>
     mapper: (err: E) => R
   ): MapErrResult<U, R, E> {
     const newValWrapperPromise = getResultWrapper<TErrorOrValue>(this)
-      .then(wrapper => {
+      .then((wrapper) => {
         if (wrapper.isError && wrapper.value instanceof ErrorClass) {
           return mapper(wrapper.value as any);
         }
         return wrapper.value;
       })
-      .then(newValue => {
+      .then((newValue) => {
         if (isResult(newValue)) {
           return getResultWrapper(newValue);
         } else {
@@ -97,8 +105,10 @@ export class CommonResult<TErrorOrValue>
     return new CommonResult(newValWrapperPromise) as any;
   }
 
-  promise<U extends Result<unknown, unknown>>(this: U): Promise<InferOk<U> | never> {
-    return getResultWrapper(this).then(wrapper =>
+  promise<U extends Result<unknown, unknown>>(
+    this: U
+  ): Promise<InferOk<U> | never> {
+    return getResultWrapper(this).then((wrapper) =>
       wrapper.isError
         ? Promise.reject(wrapper.value)
         : Promise.resolve(wrapper.value as InferOk<U>)

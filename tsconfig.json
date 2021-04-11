@@ -16,5 +16,5 @@
     "types": ["mocha", "chai", "node"]
   },
   "include": ["./src/**/*.ts"],
-  "exclude": ["./src/test"]
+  "exclude": ["./src/test", "./dist"]
 }

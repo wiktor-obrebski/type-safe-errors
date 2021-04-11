@@ -10,26 +10,26 @@ class Error2 {
 class Error3 {
   __brand!: 'Error3';
 }
-class Error4 {
-  __brand!: 'Error4';
-}
 
 test('Result combine of two Ok values result returns Ok result of array of two values', (done) => {
-  const mapped: Result<['test-return1', 'test-return2'], never> = Result.combine([
+  const mapped: Result<
+    ['test-return1', 'test-return2'],
+    never
+  > = Result.combine([
     Ok.of('test-return1' as const),
-    Ok.of('test-return2' as const)
+    Ok.of('test-return2' as const),
   ]);
 
   shouldEventuallyOk(mapped, ['test-return1', 'test-return2'], done);
 });
 
 test('Result combine of Ok result and Err result value returns Err result with only original Err result value', (done) => {
-  const err = new Error1()
+  const err = new Error1();
   const mapped: Result<unknown, Error1> = Result.combine([
     Ok.of('test-return1' as const),
-    Err.of(err)
+    Err.of(err),
   ]);
-  mapped.mapAnyErr(x => console.log(x))
+  mapped.mapAnyErr((x) => console.log(x));
 
   shouldEventuallyErr(mapped, err, done);
 });
@@ -37,29 +37,27 @@ test('Result combine of Ok result and Err result value returns Err result with o
 test('Result combine of mixed Result values returns single Err or list of values', (done) => {
   const err = new Error1();
   const values = [
-    Ok.of(5), Ok.of("test-return" as const),
+    Ok.of(5),
+    Ok.of('test-return' as const),
     Err.of(err),
     Err.of(new Error2()),
-    Err.of(new Error3())
+    Err.of(new Error3()),
   ];
-  const mapped: Result<(number | "test-return")[], Error1 | Error2 | Error3> = Result.combine(values);
+  const mapped: Result<
+    (number | 'test-return')[],
+    Error1 | Error2 | Error3
+  > = Result.combine(values);
 
   shouldEventuallyErr(mapped, err, done);
 });
 
 test('Result combine of mixed types per Result returns expected result', (done) => {
+  const mixedResult1 = Ok.of('return-type') as Err<Error1> | Ok<'return-type'>;
 
-  const a1 = Math.random() > 0.5 ? Ok.of(6) : Err.of(new Error1());
-  const zaza = Result.combine([a1, Ok.of(6)]).map(([ala, beka]) => {
-    console.log(ala, beka);
-  });
-
-  const mixedResult1 = Ok.of("return-type") as Err<Error1> | Ok<"return-type">;
-
-  const mapped: Result<["return-type", number], Error1> = Result.combine([
+  const mapped: Result<['return-type', number], Error1> = Result.combine([
     mixedResult1,
-    Ok.of(5)
+    Ok.of(5),
   ]);
 
-  shouldEventuallyOk(mapped, ["return-type", 5], done);
+  shouldEventuallyOk(mapped, ['return-type', 5], done);
 });

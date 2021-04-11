@@ -7,7 +7,7 @@ async function shouldEventuallyOk<TValue>(
   result: Result<unknown, unknown>,
   value: TValue,
   done: (err?: any) => void
-) {
+): Promise<void> {
   const wrapper = await result.__value;
 
   if (wrapper.isError) {
@@ -26,7 +26,7 @@ async function shouldEventuallyErr<TValue>(
   result: Result<unknown, unknown>,
   value: TValue,
   done: (err?: any) => void
-) {
+): Promise<void> {
   const wrapper = await result.__value;
 
   if (wrapper.isError) {

@@ -1,22 +1,18 @@
 import { CommonResult } from './common-result';
-import { ResultWrapper } from './result-wrapper';
-import {
-  Result as ResultType, AClass,
-  Ok, OkMapper, MapOkResult,
-  Err, ErrMapper, MapErrResult, MapAnyErrResult, InferErr
-} from './result-helpers';
+import { Result as ResultType, Ok, Err } from './result-helpers';
 
 export { Ok, Err, Result, CombineResult };
 
-type CombineResult<T extends readonly ResultType<unknown, unknown>[]> =
-  ResultType<ExtractOkTypes<T>, ExtractErrTypes<T>[number]>;
+type CombineResult<
+  T extends readonly ResultType<unknown, unknown>[]
+> = ResultType<ExtractOkTypes<T>, ExtractErrTypes<T>[number]>;
 
 const Result = {
   combine<T extends readonly ResultType<unknown, unknown>[]>(
     results: [...T]
   ): CombineResult<T> {
-    const wrappersPromise = Promise.all(results.map(res => res.__value));
-    const resultPromise = wrappersPromise.then(wrappers => {
+    const wrappersPromise = Promise.all(results.map((res) => res.__value));
+    const resultPromise = wrappersPromise.then((wrappers) => {
       const values = [];
       for (const wrapper of wrappers) {
         if (wrapper.isError) {
@@ -44,10 +40,6 @@ const Err = {
   },
 };
 
-type FilterOk<U extends ResultType<unknown, unknown>> = U extends Ok<unknown>
-  ? U
-  : never;
-
 // Given a list of Results, this extracts all the different `T` types from that list
 type ExtractOkTypes<T extends readonly ResultType<unknown, unknown>[]> = {
   [Key in keyof T]: T[Key] extends ResultType<unknown, unknown>
@@ -65,17 +57,19 @@ type ExtractErrTypes<T extends readonly ResultType<unknown, unknown>[]> = {
 // need to be separated generic type to run it for every element of union T separately
 type ExtractOkFromUnion<T extends ResultType<unknown, unknown>> = T extends Ok<
   infer V
-> // filter out "unknown" values
-  ? V extends {}
+>
+  ? // eslint-disable-next-line @typescript-eslint/ban-types
+    V extends {} // filter out "unknown" values
     ? V
     : never
   : never;
 
 // need to be separated generic type to run it for every element of union T separately
-type ExtractErrFromUnion<T extends ResultType<unknown, unknown>> = T extends Err<
-  infer E
-> // filter out "unknown" values
-  ? E extends {}
+type ExtractErrFromUnion<
+  T extends ResultType<unknown, unknown>
+> = T extends Err<infer E>
+  ? // eslint-disable-next-line @typescript-eslint/ban-types
+    E extends {} // filter out "unknown" values
     ? E
     : never
   : never;

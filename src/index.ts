@@ -1,5 +1,9 @@
 // aliasing is to re-export types and factory values on same names
-import type { Result as ResultType, Ok as OkType, Err as ErrType } from './result-helpers';
+import type {
+  Result as ResultType,
+  Ok as OkType,
+  Err as ErrType,
+} from './result-helpers';
 import { Result as ResultVal, Ok as OkVal, Err as ErrVal } from './result';
 
 export const Result = ResultVal;
