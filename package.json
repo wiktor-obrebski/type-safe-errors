@@ -23,7 +23,11 @@
   "keywords": [
     "Result",
     "Type-safe",
-    "Strongly typed"
+    "Strongly typed",
+    "Strongly typed error",
+    "Type-safe",
+    "Error",
+    "Exception"
   ],
   "homepage": "https://github.com/wiktor-obrebski/type-safe-errors#readme",
   "dependencies": {
