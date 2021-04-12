@@ -2,15 +2,16 @@
 
 ## Description
 
-`type-safe-errors` is a library that provide type safe errors/exceptions to Typescript.
-[Describe the problem with an example - what is the problem with errors in TS/JS]
-[Describe the proposed solution]
+`type-safe-errors` is a library that provide type safe errors/exceptions to Typescript.  
+[Describe the problem with an example - what is the problem with errors in TS/JS]  
+[Describe the proposed solution]  
 
 ## Table Of Contents
 
 * [Installation](#installation)
 * [Philosphy](#philosphy)
 * [API Documentation](#api-documentation)
+* [Inspiration](#inspiration)
 
 ## Installation
 
@@ -61,7 +62,7 @@ const okResult = Ok.of({
 ---
 
 ### Err
-`Err` object represents a invalid result of an action.
+`Err` object represents an invalid result of an action.
 
 #### `Err.of`
 
@@ -70,7 +71,7 @@ Create new `Err` result.
 **Signature:**
 
 ```typescript
-Err.of<TValue>(value: TValue): Err<TValue> {}
+Err.of<TError>(value: TError): Err<TError> {}
 ```
 
 **Example:**
@@ -86,3 +87,6 @@ const errResult = Err.of(new UserNotFound());
 ```
 
 ---
+
+## Inspiration
+[Reference `Khalil` ("https://khalilstemmler.com/"), `neverthrow` and others]
