@@ -721,3 +721,38 @@ suite('Result map of mixed 2 Ok and 2 Err results', () => {
     shouldEventuallyOk(mapped, 'test-ok', done);
   });
 });
+
+suite('mapAnyErr', () => {
+  type MixedResult<TValue> = Ok<TValue> | Err<Error1> | Err<Error2>;
+
+  const result = Ok.of(5) as Ok<string> | MixedResult<number>;
+
+  test('returns not changed result for Ok result', (done) => {
+    const mapped:
+      | Ok<number>
+      | Ok<string>
+      | Err<'test-return'> = result.mapAnyErr((_value: Error1 | Error2) => {
+      return 'test-return' as const;
+    });
+
+    shouldEventuallyOk(mapped, 5, done);
+  });
+});
+
+suite('mapErr', () => {
+  type MixedResult<TValue> = Ok<TValue> | Err<Error1> | Err<Error2>;
+
+  const result = Ok.of(5) as Ok<string> | MixedResult<number>;
+
+  test('returns not changed result for Ok result', (done) => {
+    const mapped:
+      | Ok<number>
+      | Ok<string>
+      | Err<'test-return'>
+      | Err<Error1> = result.mapErr(Error2, (_value: Error2) => {
+      return 'test-return' as const;
+    });
+
+    shouldEventuallyOk(mapped, 5, done);
+  });
+});

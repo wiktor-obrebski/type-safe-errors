@@ -69,17 +69,20 @@ export class CommonResult<TErrorOrValue>
     this: U,
     mapper: ErrMapper<U, R>
   ): MapAnyErrResult<U, R> {
-    const newValWrapperPromise = getResultWrapper<TErrorOrValue>(this)
-      .then((wrapper) =>
-        wrapper.isError ? mapper(wrapper.value as any) : wrapper.value
-      )
-      .then((newValue) => {
+    const newValWrapperPromise = getResultWrapper<TErrorOrValue>(this).then(
+      async (wrapper) => {
+        if (!wrapper.isError) {
+          return wrapper;
+        }
+
+        const newValue = await mapper(wrapper.value as any);
         if (isResult(newValue)) {
           return getResultWrapper(newValue);
         } else {
           return new ResultWrapper(newValue, true);
         }
-      });
+      }
+    );
     return new CommonResult(newValWrapperPromise) as any;
   }
 
@@ -88,20 +91,20 @@ export class CommonResult<TErrorOrValue>
     ErrorClass: AClass<E>,
     mapper: (err: E) => R
   ): MapErrResult<U, R, E> {
-    const newValWrapperPromise = getResultWrapper<TErrorOrValue>(this)
-      .then((wrapper) => {
-        if (wrapper.isError && wrapper.value instanceof ErrorClass) {
-          return mapper(wrapper.value as any);
+    const newValWrapperPromise = getResultWrapper<TErrorOrValue>(this).then(
+      async (wrapper) => {
+        if (!(wrapper.isError && wrapper.value instanceof ErrorClass)) {
+          return wrapper;
         }
-        return wrapper.value;
-      })
-      .then((newValue) => {
+
+        const newValue = await mapper(wrapper.value as any);
         if (isResult(newValue)) {
           return getResultWrapper(newValue);
         } else {
           return new ResultWrapper(newValue, true);
         }
-      });
+      }
+    );
     return new CommonResult(newValWrapperPromise) as any;
   }
 
