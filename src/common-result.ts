@@ -54,11 +54,15 @@ export class CommonResult<TErrorOrValue>
           return wrapper;
         }
 
-        const newValue = await mapper(wrapper.value as any);
-        if (isResult(newValue)) {
-          return getResultWrapper(newValue);
-        } else {
-          return new ResultWrapper(newValue, false);
+        try {
+          const newValue = await mapper(wrapper.value as any);
+          if (isResult(newValue)) {
+            return getResultWrapper(newValue);
+          } else {
+            return new ResultWrapper(newValue, false);
+          }
+        } catch (err: unknown) {
+          return new ResultWrapper(err, true);
         }
       }
     );
@@ -75,11 +79,15 @@ export class CommonResult<TErrorOrValue>
           return wrapper;
         }
 
-        const newValue = await mapper(wrapper.value as any);
-        if (isResult(newValue)) {
-          return getResultWrapper(newValue);
-        } else {
-          return new ResultWrapper(newValue, true);
+        try {
+          const newValue = await mapper(wrapper.value as any);
+          if (isResult(newValue)) {
+            return getResultWrapper(newValue);
+          } else {
+            return new ResultWrapper(newValue, true);
+          }
+        } catch (err: unknown) {
+          return new ResultWrapper(err, true);
         }
       }
     );
@@ -97,11 +105,15 @@ export class CommonResult<TErrorOrValue>
           return wrapper;
         }
 
-        const newValue = await mapper(wrapper.value as any);
-        if (isResult(newValue)) {
-          return getResultWrapper(newValue);
-        } else {
-          return new ResultWrapper(newValue, true);
+        try {
+          const newValue = await mapper(wrapper.value as any);
+          if (isResult(newValue)) {
+            return getResultWrapper(newValue);
+          } else {
+            return new ResultWrapper(newValue, true);
+          }
+        } catch (err: unknown) {
+          return new ResultWrapper(err, true);
         }
       }
     );

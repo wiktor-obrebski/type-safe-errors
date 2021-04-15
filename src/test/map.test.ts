@@ -17,8 +17,6 @@ class Error3 {
  * won't compile in case of new bug introduction to lib typings
  */
 
-// TODO: handle case when `map`/`mapErr`/`combine` throw real exception
-
 suite('Result map of single Ok result', () => {
   const result = Ok.of(5);
 
@@ -720,39 +718,176 @@ suite('Result map of mixed 2 Ok and 2 Err results', () => {
 
     shouldEventuallyOk(mapped, 'test-ok', done);
   });
+
+  test('returns err result of the exception if mapper throw an exception', (done) => {
+    const err4 = new Error2();
+
+    const result = Ok.of(5) as Err<Error1> | Ok<number>;
+
+    // the throwed error type is not and can not be included in result types.
+    // typescript do not support throwed error type following
+    const mapped: Ok<number> | Err<Error1> = result.map((_val: number) => {
+      if (true) {
+        throw err4;
+      }
+    });
+
+    shouldEventuallyErr(mapped, err4, done);
+  });
 });
 
 suite('mapAnyErr', () => {
-  type MixedResult<TValue> = Ok<TValue> | Err<Error1> | Err<Error2>;
-
-  const result = Ok.of(5) as Ok<string> | MixedResult<number>;
-
   test('returns not changed result for Ok result', (done) => {
-    const mapped:
-      | Ok<number>
-      | Ok<string>
-      | Err<'test-return'> = result.mapAnyErr((_value: Error1 | Error2) => {
-      return 'test-return' as const;
-    });
+    const result = Ok.of(5) as Ok<number> | Err<Error1> | Err<Error2>;
+
+    const mapped: Ok<number> | Err<'test-return'> = result.mapAnyErr(
+      (_value: Error1 | Error2) => {
+        return 'test-return' as const;
+      }
+    );
 
     shouldEventuallyOk(mapped, 5, done);
+  });
+
+  test('returns Err.of mapped value', (done) => {
+    const err1 = new Error1();
+    const err2 = new Error2();
+    const result = Err.of(err1) as Err<Error1> | Ok<number>;
+    const mapped: Ok<number> | Err<Error2> = result.mapAnyErr(
+      (_err: Error1) => {
+        return err2;
+      }
+    );
+
+    shouldEventuallyErr(mapped, err2, done);
+  });
+
+  test('returns mapped value if its an ok result', (done) => {
+    const err1 = new Error1();
+
+    const result = Err.of(err1) as Err<Error1> | Ok<number>;
+    const mapped: Ok<number> = result.mapAnyErr((_err: Error1) => {
+      return Ok.of(25);
+    });
+
+    shouldEventuallyOk(mapped, 25, done);
+  });
+
+  test('returns mapped value if its an err result', (done) => {
+    const err1 = new Error1();
+    const err2 = new Error2();
+
+    const result = Err.of(err1) as Err<Error1> | Ok<number>;
+    const mapped: Ok<number> | Err<Error2> = result.mapAnyErr(
+      (_err: Error1) => {
+        return Err.of(err2);
+      }
+    );
+
+    shouldEventuallyErr(mapped, err2, done);
+  });
+
+  test('returns err result of the exception if mapper throw an exception', (done) => {
+    const err1 = new Error1();
+    const err4 = new Error2();
+
+    const result = Err.of(err1) as Err<Error1> | Ok<number>;
+
+    // the throwed error type is not and can not be included in result types.
+    // typescript do not support throwed error type following
+    const mapped: Ok<number> = result.mapAnyErr((_err: Error1) => {
+      if (true) {
+        throw err4;
+      }
+    });
+
+    shouldEventuallyErr(mapped, err4, done);
   });
 });
 
 suite('mapErr', () => {
-  type MixedResult<TValue> = Ok<TValue> | Err<Error1> | Err<Error2>;
-
-  const result = Ok.of(5) as Ok<string> | MixedResult<number>;
-
   test('returns not changed result for Ok result', (done) => {
+    const result = Ok.of(5) as Ok<number> | Err<Error1> | Err<Error2>;
+
+    const mapped: Ok<number> | Err<'test-return'> | Err<Error1> = result.mapErr(
+      Error2,
+      (_value: Error2) => {
+        return 'test-return' as const;
+      }
+    );
+
+    shouldEventuallyOk(mapped, 5, done);
+  });
+
+  test('returns not changed result for not provided err type result', (done) => {
+    const err1 = new Error1();
+    const result = Err.of(err1) as Ok<number> | Err<Error1> | Err<Error2>;
+
     const mapped:
       | Ok<number>
-      | Ok<string>
-      | Err<'test-return'>
-      | Err<Error1> = result.mapErr(Error2, (_value: Error2) => {
+      | Err<Error1>
+      | Err<Error2>
+      | Err<'test-return'> = result.mapErr(Error2, (_value: Error2) => {
       return 'test-return' as const;
     });
 
-    shouldEventuallyOk(mapped, 5, done);
+    shouldEventuallyErr(mapped, err1, done);
+  });
+
+  test('returns Err.of mapped value for provided error type', (done) => {
+    const err1 = new Error1();
+    const err2 = new Error2();
+    const result = Err.of(err1) as Err<Error1> | Ok<number>;
+    const mapped: Ok<number> | Err<Error2> = result.mapErr(
+      Error1,
+      (_err: Error1) => {
+        return err2;
+      }
+    );
+
+    shouldEventuallyErr(mapped, err2, done);
+  });
+
+  test('returns mapped value if its an ok result for provided error type', (done) => {
+    const err1 = new Error1();
+
+    const result = Err.of(err1) as Err<Error1> | Ok<number>;
+    const mapped: Ok<number> = result.mapErr(Error1, (_err: Error1) => {
+      return Ok.of(25);
+    });
+
+    shouldEventuallyOk(mapped, 25, done);
+  });
+
+  test('returns mapped value if its an err result for privided error type', (done) => {
+    const err1 = new Error1();
+    const err2 = new Error2();
+
+    const result = Err.of(err1) as Err<Error1> | Ok<number>;
+    const mapped: Ok<number> | Err<Error2> = result.mapErr(
+      Error1,
+      (_err: Error1) => {
+        return Err.of(err2);
+      }
+    );
+
+    shouldEventuallyErr(mapped, err2, done);
+  });
+
+  test('returns err result of the exception if mapper throw an exception', (done) => {
+    const err1 = new Error1();
+    const err4 = new Error2();
+
+    const result = Err.of(err1) as Err<Error1> | Ok<number>;
+
+    // the throwed error type is not and can not be included in result types.
+    // typescript do not support throwed error type following
+    const mapped: Ok<number> = result.mapErr(Error1, (_err: Error1) => {
+      if (true) {
+        throw err4;
+      }
+    });
+
+    shouldEventuallyErr(mapped, err4, done);
   });
 });
