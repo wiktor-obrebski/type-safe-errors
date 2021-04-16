@@ -1,11 +1,11 @@
 import { CommonResult } from './common-result';
-import { Result as ResultType, Ok, Err } from './result-helpers';
+import { Result as ResultType, Ok, Err, SpreadErrors } from './result-helpers';
 
 export { Ok, Err, Result, CombineResult };
 
 type CombineResult<
   T extends readonly ResultType<unknown, unknown>[]
-> = ResultType<ExtractOkTypes<T>, ExtractErrTypes<T>[number]>;
+> = SpreadErrors<ResultType<ExtractOkTypes<T>, ExtractErrTypes<T>[number]>>;
 
 const Result = {
   combine<T extends readonly ResultType<unknown, unknown>[]>(

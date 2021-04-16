@@ -12,6 +12,7 @@ export {
   MapErrResult,
   MapAnyErrResult,
   InferErr,
+  SpreadErrors,
 };
 
 type Result<TValue, TError> = Ok<TValue> | Err<TError>;
@@ -32,18 +33,18 @@ interface Subresult {
   map<U extends Result<unknown, unknown>, R>(
     this: U,
     mapper: OkMapper<U, R>
-  ): MapOkResult<U, R>;
+  ): SpreadErrors<MapOkResult<SpreadErrors<U>, R>>;
 
   mapErr<U extends Result<unknown, unknown>, R, E extends InferErr<U>>(
     this: U,
     ErrorClass: AClass<E>,
     mapper: (err: E) => R
-  ): MapErrResult<U, R, E>;
+  ): SpreadErrors<MapErrResult<SpreadErrors<U>, R, E>>;
 
   mapAnyErr<U extends Result<unknown, unknown>, R>(
     this: U,
     mapper: ErrMapper<U, R>
-  ): MapAnyErrResult<U, R>;
+  ): SpreadErrors<MapAnyErrResult<SpreadErrors<U>, R>>;
 
   promise<U extends Result<unknown, unknown>>(
     this: U
@@ -98,3 +99,11 @@ type MapErrResult<U extends Result<unknown, unknown>, R, E> = U extends Err<
 interface AClass<C> {
   new (...args: any[]): C;
 }
+
+type Test1 = Ok<5> | Err<6 | 7>;
+
+type SpreadErrors<U extends Result<unknown, unknown>> = U extends Err<infer E>
+  ? E extends unknown
+    ? Err<E>
+    : never
+  : U;

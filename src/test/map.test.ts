@@ -786,6 +786,20 @@ suite('mapAnyErr', () => {
     shouldEventuallyErr(mapped, err2, done);
   });
 
+  test('spread return error types', (done) => {
+    const err1 = new Error1();
+
+    const result = Err.of(err1) as Err<Error1 | Error3> | Ok<number>;
+
+    const mapped: Ok<number> | Err<Error1> | Err<Error3> = result.mapAnyErr(
+      (err: Error1 | Error3) => {
+        return Err.of(err);
+      }
+    );
+
+    shouldEventuallyErr(mapped, err1, done);
+  });
+
   test('returns err result of the exception if mapper throw an exception', (done) => {
     const err1 = new Error1();
     const err4 = new Error2();
@@ -870,6 +884,27 @@ suite('mapErr', () => {
 
     shouldEventuallyErr(mapped, err2, done);
   });
+
+  test(
+    'returns mapped value if its an err result for privided error type ' +
+      'and left other union error types',
+    (done) => {
+      const err1 = new Error1();
+      const err2 = new Error2();
+
+      const result = Err.of(err1) as Err<Error1 | Error3> | Ok<number>;
+
+      // const mapped: Ok<number> | Err<Error2> | Err<Error3> = result.mapErr(
+      const mapped = result
+        .mapErr(Error1, (_err: Error1) => {
+          return Err.of(err2);
+        })
+        .mapErr(Error3, () => {
+          return;
+        });
+      shouldEventuallyErr(mapped, err2, done);
+    }
+  );
 
   test('returns err result of the exception if mapper throw an exception', (done) => {
     const err1 = new Error1();

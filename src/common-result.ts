@@ -10,6 +10,7 @@ import {
   MapErrResult,
   MapAnyErrResult,
   InferErr,
+  SpreadErrors,
 } from './result-helpers';
 import { ResultWrapper } from './result-wrapper';
 
@@ -47,7 +48,7 @@ export class CommonResult<TErrorOrValue>
   map<U extends Result<unknown, unknown>, R>(
     this: U,
     mapper: OkMapper<U, R>
-  ): MapOkResult<U, R> {
+  ): SpreadErrors<MapOkResult<SpreadErrors<U>, R>> {
     const newValWrapperPromise = getResultWrapper<TErrorOrValue>(this).then(
       async (wrapper) => {
         if (wrapper.isError) {
@@ -72,7 +73,7 @@ export class CommonResult<TErrorOrValue>
   mapAnyErr<U extends Result<unknown, unknown>, R>(
     this: U,
     mapper: ErrMapper<U, R>
-  ): MapAnyErrResult<U, R> {
+  ): SpreadErrors<MapAnyErrResult<SpreadErrors<U>, R>> {
     const newValWrapperPromise = getResultWrapper<TErrorOrValue>(this).then(
       async (wrapper) => {
         if (!wrapper.isError) {
@@ -98,7 +99,7 @@ export class CommonResult<TErrorOrValue>
     this: U,
     ErrorClass: AClass<E>,
     mapper: (err: E) => R
-  ): MapErrResult<U, R, E> {
+  ): SpreadErrors<MapErrResult<SpreadErrors<U>, R, E>> {
     const newValWrapperPromise = getResultWrapper<TErrorOrValue>(this).then(
       async (wrapper) => {
         if (!(wrapper.isError && wrapper.value instanceof ErrorClass)) {
