@@ -740,7 +740,7 @@ suite('mapAnyErr', () => {
   test('returns not changed result for Ok result', (done) => {
     const result = Ok.of(5) as Ok<number> | Err<Error1> | Err<Error2>;
 
-    const mapped: Ok<number> | Err<'test-return'> = result.mapAnyErr(
+    const mapped: Ok<number> | Ok<'test-return'> = result.mapAnyErr(
       (_value: Error1 | Error2) => {
         return 'test-return' as const;
       }
@@ -749,17 +749,16 @@ suite('mapAnyErr', () => {
     shouldEventuallyOk(mapped, 5, done);
   });
 
-  test('returns Err.of mapped value', (done) => {
+  test('returns Ok.of mapped value', (done) => {
     const err1 = new Error1();
-    const err2 = new Error2();
     const result = Err.of(err1) as Err<Error1> | Ok<number>;
-    const mapped: Ok<number> | Err<Error2> = result.mapAnyErr(
+    const mapped: Ok<number> | Ok<'test-return'> = result.mapAnyErr(
       (_err: Error1) => {
-        return err2;
+        return 'test-return' as const;
       }
     );
 
-    shouldEventuallyErr(mapped, err2, done);
+    shouldEventuallyOk(mapped, 'test-return', done);
   });
 
   test('returns mapped value if its an ok result', (done) => {
@@ -773,7 +772,7 @@ suite('mapAnyErr', () => {
     shouldEventuallyOk(mapped, 25, done);
   });
 
-  test('returns mapped value if its an err result', (done) => {
+  test('returns mapped result value if its an err result', (done) => {
     const err1 = new Error1();
     const err2 = new Error2();
 
@@ -809,7 +808,7 @@ suite('mapErr', () => {
   test('returns not changed result for Ok result', (done) => {
     const result = Ok.of(5) as Ok<number> | Err<Error1> | Err<Error2>;
 
-    const mapped: Ok<number> | Err<'test-return'> | Err<Error1> = result.mapErr(
+    const mapped: Ok<number> | Ok<'test-return'> | Err<Error1> = result.mapErr(
       Error2,
       (_value: Error2) => {
         return 'test-return' as const;
@@ -823,29 +822,27 @@ suite('mapErr', () => {
     const err1 = new Error1();
     const result = Err.of(err1) as Ok<number> | Err<Error1> | Err<Error2>;
 
-    const mapped:
-      | Ok<number>
-      | Err<Error1>
-      | Err<Error2>
-      | Err<'test-return'> = result.mapErr(Error2, (_value: Error2) => {
-      return 'test-return' as const;
-    });
+    const mapped: Ok<number> | Err<Error1> | Ok<'test-return'> = result.mapErr(
+      Error2,
+      (_value: Error2) => {
+        return 'test-return' as const;
+      }
+    );
 
     shouldEventuallyErr(mapped, err1, done);
   });
 
-  test('returns Err.of mapped value for provided error type', (done) => {
+  test('returns Ok.of mapped value for provided error type', (done) => {
     const err1 = new Error1();
-    const err2 = new Error2();
-    const result = Err.of(err1) as Err<Error1> | Ok<number>;
-    const mapped: Ok<number> | Err<Error2> = result.mapErr(
+    const result = Err.of(err1) as Err<Error1> | Err<Error2> | Ok<number>;
+    const mapped: Ok<number> | Ok<'test-return'> | Err<Error2> = result.mapErr(
       Error1,
       (_err: Error1) => {
-        return err2;
+        return 'test-return' as const;
       }
     );
 
-    shouldEventuallyErr(mapped, err2, done);
+    shouldEventuallyOk(mapped, 'test-return', done);
   });
 
   test('returns mapped value if its an ok result for provided error type', (done) => {

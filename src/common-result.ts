@@ -84,7 +84,7 @@ export class CommonResult<TErrorOrValue>
           if (isResult(newValue)) {
             return getResultWrapper(newValue);
           } else {
-            return new ResultWrapper(newValue, true);
+            return new ResultWrapper(newValue, false);
           }
         } catch (err: unknown) {
           return new ResultWrapper(err, true);
@@ -110,7 +110,7 @@ export class CommonResult<TErrorOrValue>
           if (isResult(newValue)) {
             return getResultWrapper(newValue);
           } else {
-            return new ResultWrapper(newValue, true);
+            return new ResultWrapper(newValue, false);
           }
         } catch (err: unknown) {
           return new ResultWrapper(err, true);

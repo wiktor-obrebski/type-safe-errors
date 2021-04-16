@@ -76,19 +76,13 @@ type ResultOrOk<R> = R extends Result<unknown, unknown>
   ? R
   : Ok<PromiseValue<R>>;
 
-type ResultOrErr<R> = undefined extends R
-  ? never
-  : R extends Result<unknown, unknown>
-  ? R
-  : Err<PromiseValue<R>>;
-
 type MapAnyErrResult<
   U extends Result<unknown, unknown>,
   R
 > = U extends Err<unknown>
   ? R extends Promise<infer S>
-    ? ResultOrErr<S>
-    : ResultOrErr<R>
+    ? ResultOrOk<S>
+    : ResultOrOk<R>
   : U;
 
 type MapErrResult<U extends Result<unknown, unknown>, R, E> = U extends Err<
@@ -96,8 +90,8 @@ type MapErrResult<U extends Result<unknown, unknown>, R, E> = U extends Err<
 >
   ? E extends EUnion
     ? R extends Promise<infer S>
-      ? ResultOrErr<S>
-      : ResultOrErr<R>
+      ? ResultOrOk<S>
+      : ResultOrOk<R>
     : U
   : U;
 
