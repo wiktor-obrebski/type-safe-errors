@@ -121,7 +121,7 @@ export class CommonResult<TErrorOrValue>
     return new CommonResult(newValWrapperPromise) as any;
   }
 
-  promise<U extends Result<unknown, unknown>>(
+  unsafePromise<U extends Result<unknown, unknown>>(
     this: U
   ): Promise<InferOk<U> | never> {
     return getResultWrapper(this).then((wrapper) =>
@@ -129,6 +129,12 @@ export class CommonResult<TErrorOrValue>
         ? Promise.reject(wrapper.value)
         : Promise.resolve(wrapper.value as InferOk<U>)
     );
+  }
+
+  promise<U extends Result<unknown, unknown>>(
+    this: U
+  ): Promise<InferOk<U> | never> {
+    return this.unsafePromise();
   }
 }
 

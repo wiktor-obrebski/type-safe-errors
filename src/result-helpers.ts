@@ -21,6 +21,10 @@ type Ok<TValue> = Subresult & {
   readonly __value: Promise<ResultWrapper<TValue>>;
 
   __brand: 'ok';
+
+  promise<U extends Result<unknown, unknown>>(
+    this: U
+  ): Promise<InferOk<U> | never>;
 };
 
 type Err<TError> = Subresult & {
@@ -46,7 +50,7 @@ interface Subresult {
     mapper: ErrMapper<U, R>
   ): SpreadErrors<MapAnyErrResult<SpreadErrors<U>, R>>;
 
-  promise<U extends Result<unknown, unknown>>(
+  unsafePromise<U extends Result<unknown, unknown>>(
     this: U
   ): Promise<InferOk<U> | never>;
 }
@@ -99,8 +103,6 @@ type MapErrResult<U extends Result<unknown, unknown>, R, E> = U extends Err<
 interface AClass<C> {
   new (...args: any[]): C;
 }
-
-type Test1 = Ok<5> | Err<6 | 7>;
 
 type SpreadErrors<U extends Result<unknown, unknown>> = U extends Err<infer E>
   ? E extends unknown
