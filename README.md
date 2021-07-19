@@ -2,9 +2,38 @@
 
 ## Description
 
-`type-safe-errors` is a library that provide type safe errors/exceptions to Typescript.  
-[Describe the problem with an example - what is the problem with errors in TS/JS]  
-[Describe the proposed solution]  
+`type-safe-errors` is a library that provide type-safe domain errors to Typescript.  
+
+Basic example
+
+```ts
+import { Ok, Err } from '../index';
+
+class InvalidCredentials extends Error {
+  __brand!: 'InvalidCredentials';
+}
+
+authorizeUser('admin', 'admin')
+  .map((user) => {
+    // user is full typed object {name: string, isAdmin: boolean}
+    console.log('authorized! hello ', user.name);
+  })
+  .mapErr(InvalidCredentials, (err) => {
+    // err is fully typed err object (InvalidCredentials class instance)
+    console.log('Invalid credentials!', err);
+  });
+
+function authorizeUser(username: string, password: string) {
+  if (username !== 'admin' || password !== 'admin') {
+    return Err.of(new InvalidCredentials());
+  }
+
+  return Ok.of({
+    name: 'admin',
+    isAdmin: true,
+  });
+}
+```
 
 ## Table Of Contents
 
