@@ -39,7 +39,7 @@ function authorizeUser(username: string, password: string) {
 
 * [Installation](#installation)
 * [Philosphy](#philosphy)
-* [API Documentation](#api-documentation)
+* [API Reference](./docs/REFERENCE.md)
 * [Inspiration](#inspiration)
 
 ## Installation
@@ -60,62 +60,7 @@ okValue
 ## Philosphy
 [Describe the project philosphy: minimal API, practical API, async]
 
-## API Documentation
 
-`type-safe-errors` expose three objects: `Ok`, `Err` and `Result`.
-
-### Ok
-`Ok` object represents a valid result of an action.
-
-#### `Ok.of`
-
-Create new `Ok` result.
-
-**Signature:**
-
-```typescript
-Ok.of<TValue>(value: TValue): Ok<TValue> {}
-```
-
-**Example:**
-
-```typescript
-import { Ok } from 'type-safe-errors';
-
-const okResult = Ok.of({
-  name: "John",
-  surname: "Doe"
-});
-```
-
----
-
-### Err
-`Err` object represents an invalid result of an action.
-
-#### `Err.of`
-
-Create new `Err` result.
-
-**Signature:**
-
-```typescript
-Err.of<TError>(value: TError): Err<TError> {}
-```
-
-**Example:**
-
-```typescript
-import { Err } from 'type-safe-errors';
-
-class UserNotFound {
-  __brand: "UserNotFound"
-}
-
-const errResult = Err.of(new UserNotFound());
-```
-
----
 
 ## Inspiration
 [Reference `Khalil` ("https://khalilstemmler.com/"), `neverthrow` and others]
