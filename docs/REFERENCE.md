@@ -105,7 +105,7 @@ Err.of<TError>(value: TError): Err<TError>
 import { Err } from 'type-safe-errors';
 
 class UserNotFound {
-  __brand: "UserNotFound"
+  __brand!: "UserNotFound"
 }
 
 const errResult = Err.of(new UserNotFound());

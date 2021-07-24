@@ -1,0 +1,11 @@
+{
+  "scripts": {
+    "start": "ts-node index.ts"
+  },
+  "dependencies": {
+    "type-safe-errors": "file:../.."
+  },
+  "devDependencies": {
+    "ts-node": "^10.1.0"
+  }
+}
