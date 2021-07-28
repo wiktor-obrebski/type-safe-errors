@@ -1,9 +1,8 @@
 # Type-safe errors in TypeScript
 
 ## Overview
-
 `type-safe-errors` provides type-safe domain errors to Typescript.  
-It's provide async promise-like interface, but with strong-typed handleable errors.
+It comes with an async promise-like interface but with strong-typed handleable errors.
 
 ## Table Of Contents
 
