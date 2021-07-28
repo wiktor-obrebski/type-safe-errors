@@ -17,26 +17,11 @@ It comes with an async promise-like interface but with strong-typed handleable e
 npm i type-safe-errors
 ```
 
-```ts
-
 ### Basic example
 
 ```ts
 import { Ok, Err } from 'type-safe-errors';
-
-class InvalidCredentials extends Error {
-  __brand!: 'InvalidCredentials';
-}
-
-authorizeUser('admin', 'admin')
-  .map((user) => {
-    // user is full typed object {name: string, isAdmin: boolean}
-    console.log('authorized! hello ', user.name);
-  })
-  .mapErr(InvalidCredentials, (err) => {
-    // err is fully typed err object (InvalidCredentials class instance)
-    console.log('Invalid credentials!', err);
-  });
+import { InvalidCredentials } from './errors';
 
 function authorizeUser(username: string, password: string) {
   if (username !== 'admin' || password !== 'admin') {
@@ -48,6 +33,16 @@ function authorizeUser(username: string, password: string) {
     isAdmin: true,
   });
 }
+
+authorizeUser('admin', 'admin')
+  .map((user) => {
+    // user is full typed object {name: string, isAdmin: boolean}
+    console.log('authorized! hello ', user.name);
+  })
+  .mapErr(InvalidCredentials, (err) => {
+    // err is fully typed err object (InvalidCredentials class instance)
+    console.log('Invalid credentials!', err);
+  });
 ```
 
 ## Description
@@ -87,7 +82,7 @@ Using `type-safe-erros` should be similar in feel to work with traditional js [p
 You could notice that the `type-safe-error` project is somehow based on [Either](https://github.com/sanctuary-js/sanctuary-either) concept from functional programming. But the goal was not to follow the idea closely but to provide an easy-to-use API in practical js work, focused on async programming.
 
 ## Inspiration
- - [https://medium.com/inato/expressive-error-handling-in-typescript-and-benefits-for-domain-driven-design-70726e061c86](https://medium.com/inato/expressive-error-handling-in-typescript-and-benefits-for-domain-driven-design-70726e061c86)
+ - [Expressive error handling in TypeScript and benefits for domain-driven design](https://medium.com/inato/expressive-error-handling-in-typescript-and-benefits-for-domain-driven-design-70726e061c86)
  - [200 OK! Error Handling in GraphQL](https://www.youtube.com/watch?v=A5-H6MtTvqk)
  - [neverthrow](https://github.com/supermacro/neverthrow)
  - [Khalil Stemmler: Flexible Error Handling w/ the Result Class](https://khalilstemmler.com/articles/enterprise-typescript-nodejs/handling-errors-result-class/)
