@@ -1,8 +1,8 @@
 # Type-safe errors in TypeScript
 
 ## Overview
-
 `type-safe-errors` provides type-safe domain errors to Typescript.  
+It comes with an async promise-like interface but with strong-typed handleable errors.
 
 ## Table Of Contents
 
@@ -76,7 +76,20 @@ This is the problem that `type-safe-errors` library is trying to solve.
 (Full example: [./examples/basic-example](./examples/basic-example))
 
 ## Philosphy
-[Describe the project philosphy: minimal API, practical API, async]
+
+### Minimal API
+`type-safe-errors` try to keep the learning curve steep. To achieve this, the API must be as simple and as intuitive as possible. It's one of the reasons why the result class is always async (e.g. [neverthrow](https://github.com/supermacro/neverthrow) have two different result types, one for sync and one for async results handling).
+The long-term goal is not to handle every possible use case. Instead, it's to do one thing well - providing a way to handle domain exceptions in a strong-typed, future-proof way.
+
+### Practical API
+Using `type-safe-erros` should be similar in feel to work with traditional js [promises](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise). You can [map](./docs/REFERENCE.md#okmapcallback) any success result (same like you can [then](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/then) fulfilled promise) or [mapAnyErr](./docs/REFERENCE.md#errmapanyerrcallback) (same as you can [catch](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/catch) rejected promise).
+
+You could notice that the `type-safe-error` project is somehow based on [Either](https://github.com/sanctuary-js/sanctuary-either) concept from functional programming. But the goal was not to follow the idea closely but to provide an easy-to-use API in practical js work, focused on async programming.
 
 ## Inspiration
-[Reference `Khalil` ("https://khalilstemmler.com/"), `neverthrow` and others]
+ - [https://medium.com/inato/expressive-error-handling-in-typescript-and-benefits-for-domain-driven-design-70726e061c86](https://medium.com/inato/expressive-error-handling-in-typescript-and-benefits-for-domain-driven-design-70726e061c86)
+ - [200 OK! Error Handling in GraphQL](https://www.youtube.com/watch?v=A5-H6MtTvqk)
+ - [neverthrow](https://github.com/supermacro/neverthrow)
+ - [Khalil Stemmler: Flexible Error Handling w/ the Result Class](https://khalilstemmler.com/articles/enterprise-typescript-nodejs/handling-errors-result-class/)
+ - [Functional Error Handling with Express.js and DDD](https://khalilstemmler.com/articles/enterprise-typescript-nodejs/functional-error-handling/)
+ - [Either](https://github.com/sanctuary-js/sanctuary-either)
