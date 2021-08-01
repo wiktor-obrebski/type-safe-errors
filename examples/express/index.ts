@@ -15,7 +15,7 @@ const logger = morgan('combined');
 app.use(logger);
 app.use(express.json());
 
-app.post<{ Body: PaymentRequestBody }>('/payments', async (req, reply) => {
+app.post<{ Body: PaymentRequestBody }>('/payments', async (req, res) => {
   const { cardNumber, cvc, productId } = req.body;
 
   const paymentResult = getProductPrice(productId).map((price) =>
@@ -24,18 +24,16 @@ app.post<{ Body: PaymentRequestBody }>('/payments', async (req, reply) => {
 
   return paymentResult
     .map((successResult) => {
-      reply.status(200).send({ message: successResult });
+      res.status(200).send({ message: successResult });
     })
     .mapErr(InvalidCVC, () => {
-      reply.status(422).send({ message: 'Invalid card CVC' });
+      res.status(422).send({ message: 'Invalid card CVC' });
     })
     .mapErr(UknownProduct, () => {
-      reply.status(404).send({ message: `Product '${productId}' not found` });
+      res.status(404).send({ message: `Product '${productId}' not found` });
     })
     .mapErr(MissingCardNumber, () => {
-      reply
-        .status(400)
-        .send({ message: `Invalid card number: '${cardNumber}'` });
+      res.status(400).send({ message: `Invalid card number: '${cardNumber}'` });
     })
     .promise();
 });
