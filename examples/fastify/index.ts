@@ -1,8 +1,13 @@
 import { fastify } from 'fastify';
-import { Err, Ok } from 'type-safe-errors';
 
-const supportedProductId = '123';
-const supportedCVC = '456';
+import { getProductPrice, payForProduct } from './pay';
+import { InvalidCVC, UknownProduct, MissingCardNumber } from './errors';
+
+interface PaymentRequestBody {
+  cardNumber: string;
+  cvc: string;
+  productId: string;
+}
 
 const app = fastify({ logger: true });
 
@@ -21,43 +26,20 @@ app.post<{ Body: PaymentRequestBody }>('/payments', async (req, reply) => {
       reply.status(422).send({ message: 'Invalid card CVC' });
     })
     .mapErr(UknownProduct, () => {
-      reply.status(404).send({ message: `Product "${productId}" not found.` });
+      reply.status(404).send({ message: `Product '${productId}' not found` });
+    })
+    .mapErr(MissingCardNumber, () => {
+      reply
+        .status(400)
+        .send({ message: `Invalid card number: '${cardNumber}'` });
     })
     .promise();
 });
 
 // Run the server!
-app.listen(3000, function (err, address) {
+app.listen(3000, (err) => {
   if (err) {
     app.log.error(err);
     process.exit(1);
   }
 });
-
-interface PaymentRequestBody {
-  cardNumber: string;
-  cvc: string;
-  productId: string;
-}
-
-function payForProduct(cardNumber: string, cvc: string, productPrice: number) {
-  if (cvc !== supportedCVC) {
-    return Err.of(new InvalidCVC());
-  }
-
-  return Ok.of(`Success. Payed ${productPrice}`);
-}
-
-function getProductPrice(productId: string) {
-  return productId === supportedProductId
-    ? Ok.of(12.5)
-    : Err.of(new UknownProduct());
-}
-
-class InvalidCVC {
-  __brand!: 'InvalidCVC';
-}
-
-class UknownProduct {
-  __brand!: 'UknownProduct';
-}
