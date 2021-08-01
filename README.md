@@ -67,7 +67,8 @@ Because of this, it's common to just return `500` in such cases (`express` doing
 
 The client app should be informed of the reason, for example, by `400` status code and error details in the response body. But first, to properly handle the errors, the developer must be aware of what errors can happen.  
 This is the problem that `type-safe-errors` library is trying to solve.  
-[*PASTE GIF WITH "Basic example" showing the functions and type hints*]  
+
+![screen-gif](./docs/basic-example.gif)
 
 (Full example: [./examples/basic-example](./examples/basic-example))
 
