@@ -8,6 +8,7 @@ It comes with an async promise-like interface but with strong-typed handleable e
 
 * [Installation](#installation)
 * [Philosphy](#philosphy)
+* [Examples](./examples)
 * [API Reference](./docs/REFERENCE.md)
 * [Inspiration](#inspiration)
 
