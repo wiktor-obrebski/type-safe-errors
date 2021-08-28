@@ -23,9 +23,11 @@
   "keywords": [
     "Result",
     "Type-safe",
+    "Promise-like",
+    "Promise like",
+    "Strong-typed",
     "Strongly typed",
     "Strongly typed error",
-    "Type-safe",
     "Error",
     "Exception"
   ],
