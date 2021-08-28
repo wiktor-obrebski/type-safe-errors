@@ -9,6 +9,8 @@
 
 Create new `Ok` result. Static function (can be called only on imported `Ok` namespace, not on `Ok` results).
 
+The operation is the results version of [Promise.resolve](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/resolve) function.
+
 **Signature:**
 
 ```typescript
@@ -33,6 +35,7 @@ const okResult = Ok.of({
 Map `Ok` result to a different result.
 Interface common for both types of results: [result.map(callback)](#resultmapcallback)
 
+The operation is the results version of [Promise.prototype.then](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/then) function.
 ---
 
 ### ok.mapErr(ErrorClass, callback)
@@ -47,6 +50,7 @@ Interface common for both types of results: [result.mapErr(ErrorClass, callback)
 Do nothing for `Ok` results.
 Interface common for both types of results: [result.mapAnyErr(callback)](#resultmapanyerrcallback)
 
+The operation is the results version of [Promise.prototype.catch](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/catch) function.
 ---
 
 ### ok.unsafePromise()
@@ -92,6 +96,8 @@ async function promiseResolver() {
 ### Err.of(...)
 
 Create new `Err` result. Static function (can be called only on imported `Err` namespace, not on `Err` results).
+
+The operation is the results version of [Promise.reject](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/reject) function.
 
 **Signature:**
 
@@ -142,6 +148,37 @@ Interface common for both types of results: [result.unsafePromise()](#resultunsa
 ---
 
 ## Result
+
+`Result` provide static utility functions to work with multiple results.
+
+### Result.combine([result1, result2, ...])
+
+ Combine provided results list into single result. If all provided results are `Ok`, returned result will be `Ok` of array of provided results values: `[Ok<A>, Ok<B>] -> Ok<[A, B]>`  
+If provided results list have at least one `Err` result, returned result will be `Err` of first `Err` result value found in the array.
+
+The operation is the results version of [Promise.all](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all) function.
+
+**Signature:**
+
+```typescript
+Result.combine(results: [Result<A>, Result<B>, ...]): Result<[A, B, ...]>
+```
+
+**Examples:**
+
+```typescript
+import { Ok, Result } from 'type-safe-errors';
+
+const ok1Result = Ok.of(5);
+const ok2Result = Ok.of(9);
+const okSumResult = Result.combine([ok1Result, ok2Result]).map(
+  ([val1, val2]) => val1 + val2
+)
+```
+
+---
+
+## Results common interface
 `Ok` and `Err` are both results and share common interface.
 
 ### result.map(callback)
