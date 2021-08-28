@@ -36,6 +36,7 @@ Map `Ok` result to a different result.
 Interface common for both types of results: [result.map(callback)](#resultmapcallback)
 
 The operation is the results version of [Promise.prototype.then](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/then) function.
+
 ---
 
 ### ok.mapErr(ErrorClass, callback)
@@ -51,6 +52,7 @@ Do nothing for `Ok` results.
 Interface common for both types of results: [result.mapAnyErr(callback)](#resultmapanyerrcallback)
 
 The operation is the results version of [Promise.prototype.catch](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/catch) function.
+
 ---
 
 ### ok.unsafePromise()
