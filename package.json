@@ -1,6 +1,6 @@
 {
   "name": "type-safe-errors",
-  "version": "0.1.6",
+  "version": "0.1.8",
   "description": "Simple type-safe errors for TypeScript",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -28,6 +28,9 @@
     "Strong-typed",
     "Strongly typed",
     "Strongly typed error",
+    "Typescript",
+    "Typescript errors",
+    "Typed errors",
     "Error",
     "Exception"
   ],
