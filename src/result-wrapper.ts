@@ -1,5 +1,6 @@
 export class ResultWrapper<TErrorOrValue>
-  implements ResultWrapper<TErrorOrValue> {
+  implements ResultWrapper<TErrorOrValue>
+{
   value: TErrorOrValue;
   isError: boolean;
 

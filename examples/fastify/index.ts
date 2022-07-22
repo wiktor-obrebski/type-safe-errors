@@ -37,7 +37,7 @@ app.post<{ Body: PaymentRequestBody }>('/payments', async (req, reply) => {
 });
 
 // Run the server!
-app.listen(3000, (err) => {
+app.listen({ port: 3000 }, (err) => {
   if (err) {
     app.log.error(err);
     process.exit(1);
