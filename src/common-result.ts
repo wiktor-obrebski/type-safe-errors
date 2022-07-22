@@ -15,7 +15,8 @@ import {
 import { ResultWrapper } from './result-wrapper';
 
 export class CommonResult<TErrorOrValue>
-  implements Ok<TErrorOrValue>, Err<TErrorOrValue> {
+  implements Ok<TErrorOrValue>, Err<TErrorOrValue>
+{
   readonly __value: Promise<ResultWrapper<TErrorOrValue>>;
   __brand: any;
 
@@ -139,7 +140,7 @@ export class CommonResult<TErrorOrValue>
 }
 
 function getResultWrapper<TErrorOrValue>(result: Result<unknown, unknown>) {
-  return ((result as unknown) as CommonResult<TErrorOrValue>).__value;
+  return (result as unknown as CommonResult<TErrorOrValue>).__value;
 }
 
 function isResult(value: unknown): value is Result<unknown, unknown> {

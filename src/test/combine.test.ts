@@ -12,13 +12,11 @@ class Error3 {
 }
 
 test('Result combine of two Ok values result returns Ok result of array of two values', (done) => {
-  const mapped: Result<
-    ['test-return1', 'test-return2'],
-    never
-  > = Result.combine([
-    Ok.of('test-return1' as const),
-    Ok.of('test-return2' as const),
-  ]);
+  const mapped: Result<['test-return1', 'test-return2'], never> =
+    Result.combine([
+      Ok.of('test-return1' as const),
+      Ok.of('test-return2' as const),
+    ]);
 
   shouldEventuallyOk(mapped, ['test-return1', 'test-return2'], done);
 });
@@ -43,10 +41,8 @@ test('Result combine of mixed Result values returns single Err or list of values
     Err.of(new Error2()),
     Err.of(new Error3()),
   ];
-  const mapped: Result<
-    (number | 'test-return')[],
-    Error1 | Error2 | Error3
-  > = Result.combine(values);
+  const mapped: Result<(number | 'test-return')[], Error1 | Error2 | Error3> =
+    Result.combine(values);
 
   shouldEventuallyErr(mapped, err, done);
 });
