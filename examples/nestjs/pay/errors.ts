@@ -1,13 +1,13 @@
 export { InvalidCVC, UknownProduct, MissingCardNumber };
 
-class InvalidCVC {
-  __brand!: 'InvalidCVC';
+class InvalidCVC extends Error {
+  name = 'InvalidCVC' as const;
 }
 
-class UknownProduct {
-  __brand!: 'UknownProduct';
+class UknownProduct extends Error {
+  name = 'UknownProduct' as const;
 }
 
-class MissingCardNumber {
-  __brand!: 'MissingCardNumber';
+class MissingCardNumber extends Error {
+  name = 'MissingCardNumber' as const;
 }
