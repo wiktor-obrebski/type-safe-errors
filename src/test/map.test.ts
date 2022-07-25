@@ -1,14 +1,14 @@
 import { Result, Ok, Err } from '../index';
 import { shouldEventuallyOk, shouldEventuallyErr } from './helper';
 
-class Error1 {
-  __brand!: 'Error1';
+class Error1 extends Error {
+  name = 'Error1' as const;
 }
-class Error2 {
-  __brand!: 'Error2';
+class Error2 extends Error {
+  name = 'Error2' as const;
 }
-class Error3 {
-  __brand!: 'Error3';
+class Error3 extends Error {
+  name = 'Error3' as const;
 }
 
 /**

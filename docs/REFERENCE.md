@@ -112,8 +112,8 @@ Err.of<TError>(value: TError): Err<TError>
 ```typescript
 import { Err } from 'type-safe-errors';
 
-class UserNotFound {
-  __brand!: "UserNotFound"
+class UserNotFound extends Error {
+  name = "UserNotFound" as const;
 }
 
 const errResult = Err.of(new UserNotFound());
@@ -243,8 +243,8 @@ Err<TErr>.map<unknown>(callback: (value: never) => never): Err<TErr>;
 ```typescript
 import { Ok, Err } from 'type-safe-errors';
 
-class UserNotFound {
-  __brand: "UserNotFound"
+class UserNotFound extends Error {
+  name = "UserNotFound" as const;
 }
 
 const okOfNumber5 = Ok.of(10).map(value => value / 2);

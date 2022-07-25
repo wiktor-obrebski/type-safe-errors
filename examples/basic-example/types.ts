@@ -9,10 +9,10 @@ interface Product {
   price: number | null;
 }
 
-class InvalidCVC {
-  __brand!: 'InvalidCVC';
+class InvalidCVC extends Error {
+  name = 'InvalidCVC' as const;
 }
 
-class MissingPrice {
-  __brand!: 'MissingPrice';
+class MissingPrice extends Error {
+  name = 'MissingPrice' as const;
 }

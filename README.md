@@ -23,8 +23,8 @@ npm i type-safe-errors
 ```ts
 import { Ok, Err } from 'type-safe-errors';
 
-class InvalidCredentialsError {
-  __brand: 'InvalidCredentials';
+class InvalidCredentialsError extends Error {
+  name = 'InvalidCredentials' as const;
 }
 
 function authorizeUser(username: string, password: string) {
