@@ -11,6 +11,7 @@ It comes with an async promise-like interface but with strong-typed handleable e
 * [Examples](./examples)
 * [API Reference](./docs/REFERENCE.md)
 * [Inspiration](#inspiration)
+* [Troubleshooting](#troubleshooting)
 
 ## Installation
 
@@ -127,3 +128,29 @@ You could notice that the `type-safe-error` project is somehow based on [Either]
  - [Khalil Stemmler: Flexible Error Handling w/ the Result Class](https://khalilstemmler.com/articles/enterprise-typescript-nodejs/handling-errors-result-class/)
  - [Functional Error Handling with Express.js and DDD](https://khalilstemmler.com/articles/enterprise-typescript-nodejs/functional-error-handling/)
  - [Either](https://github.com/sanctuary-js/sanctuary-either)
+
+## Troubleshooting
+
+### Errors seems not be catched by `.mapErr(...)` function
+
+Quick fix: upgrade your `tsconfig.json` file [`compilerOptions.target`](https://www.typescriptlang.org/tsconfig#target) option to at least `es6`.
+
+The `type-safe-errors` library depends on `instanceof` standard JS feature.
+But extending by JavaScript [Error](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error) does not works correctly for TypeScript compilation target `es5` and below. This is explained on [TypeScript wiki](https://github.com/Microsoft/TypeScript/wiki/Breaking-Changes#extending-built-ins-like-error-array-and-map-may-no-longer-work).
+
+One option is to upgrade `tsconfig.json` file [`compilerOptions.target`](https://www.typescriptlang.org/tsconfig#target) to `es6` or higher version.
+An alternative is to abstain from extending by JavaScript [Error](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error) class, e.g.
+
+```ts
+// original
+class InvalidCredentialsError extends Error {
+  name = 'InvalidCredentials' as const;
+}
+
+// without Error parent
+class InvalidCredentialsError {
+  name = 'InvalidCredentials' as const;
+}
+```
+
+This works for most cases, but be aware that sometimes it can give a rejection of a non-Error JavaScript object (instance of your class). It can interfere with some other tools (e.g. Mocha can sometimes show some cryptic error messages when a test fails).
