@@ -1,5 +1,6 @@
 import express from 'express';
 import morgan from 'morgan';
+import { Result } from 'type-safe-errors';
 
 import { getProductPrice, payForProduct } from './pay';
 import { InvalidCVC, UknownProduct, MissingCardNumber } from './errors';
@@ -18,11 +19,8 @@ app.use(express.json());
 app.post<{ Body: PaymentRequestBody }>('/payments', async (req, res) => {
   const { cardNumber, cvc, productId } = req.body;
 
-  const paymentResult = getProductPrice(productId).map((price) =>
-    payForProduct(cardNumber, cvc, price)
-  );
-
-  return paymentResult
+  return Result.from(() => getProductPrice(productId))
+    .map((price) => payForProduct(cardNumber, cvc, price))
     .map((successResult) => {
       res.status(200).send({ message: successResult });
     })

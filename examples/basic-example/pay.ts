@@ -1,7 +1,10 @@
 import { Err, Ok } from 'type-safe-errors';
 import { Product, UserCard, MissingPrice, InvalidCVC } from './types';
 
-export function payForProduct(card: UserCard, product: Product) {
+export async function payForProduct(card: UserCard, product: Product) {
+  // simulate fetching data
+  await sleep(10);
+
   if (!card.cvc) {
     return Err.of(new InvalidCVC());
   }
@@ -13,4 +16,8 @@ export function payForProduct(card: UserCard, product: Product) {
   // payment logic
 
   return Ok.of(`Success. Payed ${product.price}`);
+}
+
+function sleep(sleepMs: number) {
+  return new Promise((resolve) => setTimeout(resolve, sleepMs));
 }

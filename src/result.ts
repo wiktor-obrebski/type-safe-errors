@@ -1,9 +1,18 @@
-import { CommonResult } from './common-result';
-import { Result as ResultType, Ok, Err, SpreadErrors } from './result-helpers';
+import { CommonResult, isResult, getResultWrapper } from './common-result';
+import {
+  Result as ResultType,
+  Ok,
+  Err,
+  SpreadErrors,
+  MapFromResult,
+} from './result-helpers';
+import { ResultWrapper } from './result-wrapper';
 
 export { Ok, OkNamespace, Err, ErrNamespace, Result, ResultNamespace };
 
 interface ResultNamespace {
+  from<R>(factory: () => R): MapFromResult<R>;
+
   /**
    * Combine provided Results list into single Result. If all provided Results
    * are Ok Results, returned Result will be Result Ok of array of provided Results values:
@@ -19,6 +28,19 @@ interface ResultNamespace {
 }
 
 const Result: ResultNamespace = {
+  from(factory) {
+    const factoryPromise = Promise.resolve(factory());
+    const resultWrapperPromise = factoryPromise.then((result) => {
+      if (isResult(result)) {
+        return getResultWrapper(result);
+      } else {
+        return new ResultWrapper(result, false);
+      }
+    });
+
+    return CommonResult.__fromValueWrapper(resultWrapperPromise) as any;
+  },
+
   combine(results) {
     const wrappersPromise = Promise.all(results.map((res) => res.__value));
     const resultPromise = wrappersPromise.then((wrappers) => {

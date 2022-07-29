@@ -1,5 +1,6 @@
 import { Controller, Post, Body, Res } from '@nestjs/common';
 import { Response } from 'express';
+import { Result } from 'type-safe-errors';
 
 import { InvalidCVC, UknownProduct, MissingCardNumber } from './errors';
 import { PayService } from './pay.service';
@@ -18,11 +19,8 @@ export class PayController {
   createPayment(@Res() res: Response, @Body() payment: PaymentDto) {
     const { cardNumber, cvc, productId } = payment;
 
-    const paymentResult = this.payService
-      .getProductPrice(productId)
-      .map((price) => this.payService.payForProduct(cardNumber, cvc, price));
-
-    return paymentResult
+    return Result.from(() => this.payService.getProductPrice(productId))
+      .map((price) => this.payService.payForProduct(cardNumber, cvc, price))
       .map((successResult) => {
         res.status(200).send({ message: successResult });
       })

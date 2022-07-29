@@ -14,7 +14,9 @@ import {
 } from './result-helpers';
 import { ResultWrapper } from './result-wrapper';
 
-export class CommonResult<TErrorOrValue>
+export { CommonResult, isResult, getResultWrapper };
+
+class CommonResult<TErrorOrValue>
   implements Ok<TErrorOrValue>, Err<TErrorOrValue>
 {
   readonly __value: Promise<ResultWrapper<TErrorOrValue>>;

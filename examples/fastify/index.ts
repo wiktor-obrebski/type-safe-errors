@@ -1,4 +1,5 @@
 import { fastify } from 'fastify';
+import { Result } from 'type-safe-errors';
 
 import { getProductPrice, payForProduct } from './pay';
 import { InvalidCVC, UknownProduct, MissingCardNumber } from './errors';
@@ -14,11 +15,8 @@ const app = fastify({ logger: true });
 app.post<{ Body: PaymentRequestBody }>('/payments', async (req, reply) => {
   const { cardNumber, cvc, productId } = req.body;
 
-  const paymentResult = getProductPrice(productId).map((price) =>
-    payForProduct(cardNumber, cvc, price)
-  );
-
-  return paymentResult
+  return Result.from(() => getProductPrice(productId))
+    .map((price) => payForProduct(cardNumber, cvc, price))
     .map((successResult) => {
       reply.status(200).send({ message: successResult });
     })
