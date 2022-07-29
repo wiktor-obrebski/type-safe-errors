@@ -1,6 +1,6 @@
 {
   "name": "type-safe-errors",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Simple type-safe errors for TypeScript",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
