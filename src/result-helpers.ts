@@ -5,6 +5,7 @@ export {
   AClass,
   Ok,
   OkMapper,
+  MapFromResult,
   MapOkResult,
   InferOk,
   Err,
@@ -100,6 +101,12 @@ type InferErr<U extends Result<unknown, unknown>> = U extends Err<infer T>
 type ErrMapper<U extends Result<unknown, unknown>, R> = (
   value: InferErr<U>
 ) => R;
+
+type MapFromResult<R> = R extends Result<unknown, unknown>
+  ? SpreadErrors<R>
+  : R extends Promise<infer S>
+  ? ResultOrOk<S>
+  : ResultOrOk<R>;
 
 type MapOkResult<U extends Result<unknown, unknown>, R> = U extends Ok<unknown>
   ? R extends Promise<infer S>
