@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { InvalidCVC, UknownProduct, MissingCardNumber } from './errors';
 import { Err, Ok } from 'type-safe-errors';
+import {
+  InvalidCVCError,
+  UknownProductError,
+  MissingCardNumberError,
+} from './errors';
 
 const supportedProductId = '123';
 const supportedCVC = '456';
@@ -12,11 +16,11 @@ export class PayService {
     await sleep(10);
 
     if (cvc !== supportedCVC) {
-      return Err.of(new InvalidCVC());
+      return Err.of(new InvalidCVCError());
     }
 
     if (!cardNumber) {
-      return Err.of(new MissingCardNumber());
+      return Err.of(new MissingCardNumberError());
     }
 
     return Ok.of(`Success. Payed ${productPrice}`);
@@ -28,7 +32,7 @@ export class PayService {
 
     return productId === supportedProductId
       ? Ok.of(12.5)
-      : Err.of(new UknownProduct());
+      : Err.of(new UknownProductError());
   }
 }
 

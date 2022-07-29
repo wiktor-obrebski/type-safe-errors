@@ -3,7 +3,11 @@ import morgan from 'morgan';
 import { Result } from 'type-safe-errors';
 
 import { getProductPrice, payForProduct } from './pay';
-import { InvalidCVC, UknownProduct, MissingCardNumber } from './errors';
+import {
+  InvalidCVCError,
+  UknownProductError,
+  MissingCardNumberError,
+} from './errors';
 
 interface PaymentRequestBody {
   cardNumber: string;
@@ -24,13 +28,13 @@ app.post<{ Body: PaymentRequestBody }>('/payments', async (req, res) => {
     .map((successResult) => {
       res.status(200).send({ message: successResult });
     })
-    .mapErr(InvalidCVC, () => {
+    .mapErr(InvalidCVCError, () => {
       res.status(422).send({ message: 'Invalid card CVC' });
     })
-    .mapErr(UknownProduct, () => {
+    .mapErr(UknownProductError, () => {
       res.status(404).send({ message: `Product '${productId}' not found` });
     })
-    .mapErr(MissingCardNumber, () => {
+    .mapErr(MissingCardNumberError, () => {
       res.status(400).send({ message: `Invalid card number: '${cardNumber}'` });
     })
     .promise();

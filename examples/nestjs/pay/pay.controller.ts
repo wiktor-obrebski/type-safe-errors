@@ -2,7 +2,11 @@ import { Controller, Post, Body, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { Result } from 'type-safe-errors';
 
-import { InvalidCVC, UknownProduct, MissingCardNumber } from './errors';
+import {
+  InvalidCVCError,
+  UknownProductError,
+  MissingCardNumberError,
+} from './errors';
 import { PayService } from './pay.service';
 
 class PaymentDto {
@@ -24,13 +28,13 @@ export class PayController {
       .map((successResult) => {
         res.status(200).send({ message: successResult });
       })
-      .mapErr(InvalidCVC, () => {
+      .mapErr(InvalidCVCError, () => {
         res.status(422).send({ message: 'Invalid card CVC' });
       })
-      .mapErr(UknownProduct, () => {
+      .mapErr(UknownProductError, () => {
         res.status(404).send({ message: `Product '${productId}' not found` });
       })
-      .mapErr(MissingCardNumber, () => {
+      .mapErr(MissingCardNumberError, () => {
         res
           .status(400)
           .send({ message: `Invalid card number: '${cardNumber}'` });

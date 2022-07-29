@@ -1,5 +1,9 @@
-import { InvalidCVC, MissingCardNumber, UknownProduct } from './errors';
 import { Err, Ok } from 'type-safe-errors';
+import {
+  InvalidCVCError,
+  MissingCardNumberError,
+  UknownProductError,
+} from './errors';
 
 const supportedProductId = '123';
 const supportedCVC = '456';
@@ -15,11 +19,11 @@ async function payForProduct(
   await sleep(10);
 
   if (cvc !== supportedCVC) {
-    return Err.of(new InvalidCVC());
+    return Err.of(new InvalidCVCError());
   }
 
   if (!cardNumber) {
-    return Err.of(new MissingCardNumber());
+    return Err.of(new MissingCardNumberError());
   }
 
   return Ok.of(`Success. Payed ${productPrice}`);
@@ -31,7 +35,7 @@ async function getProductPrice(productId: string) {
 
   return productId === supportedProductId
     ? Ok.of(12.5)
-    : Err.of(new UknownProduct());
+    : Err.of(new UknownProductError());
 }
 
 function sleep(sleepMs: number) {
