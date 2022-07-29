@@ -24,7 +24,7 @@ npm i type-safe-errors
 import { Ok, Err } from 'type-safe-errors';
 
 class InvalidCredentialsError {
-  __brand: 'InvalidCredentials'
+  __brand: 'InvalidCredentials';
 }
 
 function authorizeUser(username: string, password: string) {
@@ -46,6 +46,40 @@ authorizeUser('admin', 'admin')
     // err is fully typed err object (InvalidCredentialsError class instance)
     console.log('Invalid credentials!', err);
   });
+```
+
+### Async basic example
+It's common case to start results chain from an async call, e.g. call to your database or external API. It can be handle in few ways, but simplest is to use dedicated helper function: [Result.from](./docs/REFERENCE.md#resultfromresultfactory).
+
+```ts
+import { Ok, Err, Result } from 'type-safe-errors';
+
+class InvalidCredentialsError {
+  __brand: 'InvalidCredentials';
+}
+
+async function authorizeUser(username: string, password: string) {
+  // simulate async call
+  const storedPassword = await Promise.resolve('admin');
+  if (username === 'admin' && password === storedPassword) {
+    return Ok.of({
+      name: 'admin',
+      isAdmin: true,
+    });
+  } else {
+    return Err.of(new InvalidCredentialsError());
+  }
+}
+
+Result.from(() => authorizeUser('admin', 'admin'))
+  .map((user) => {
+    console.log('authorized! hello ', user.name);
+  })
+  .mapErr(InvalidCredentialsError, (err) => {
+    // err is fully typed err object (InvalidCredentialsError class instance)
+    console.log('Invalid credentials!', err);
+  });
+
 ```
 
 ## Description

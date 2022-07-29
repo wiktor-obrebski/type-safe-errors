@@ -155,7 +155,7 @@ Interface common for both types of results: [result.unsafePromise()](#resultunsa
 
 ### Result.combine([result1, result2, ...])
 
- Combine provided results list into single result. If all provided results are `Ok`, returned result will be `Ok` of array of provided results values: `[Ok<A>, Ok<B>] -> Ok<[A, B]>`  
+Combine provided results list into single result. If all provided results are `Ok`, returned result will be `Ok` of array of provided results values: `[Ok<A>, Ok<B>] -> Ok<[A, B]>`  
 If provided results list have at least one `Err` result, returned result will be `Err` of first `Err` result value found in the array.
 
 The operation is the results version of [Promise.all](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all) function.
@@ -176,6 +176,44 @@ const ok2Result = Ok.of(9);
 const okSumResult = Result.combine([ok1Result, ok2Result]).map(
   ([val1, val2]) => val1 + val2
 )
+```
+
+---
+
+### Result.from(resultFactory)
+
+Wrap provided factory function into single result. The function can be async or sync. It is useful to start the result chain.  
+
+All `Err` results returned by the factory function will be mapped to exactly same error result. All other values (`Ok` results and raw JavaScipt structures) will be mapped to `Ok` result.
+
+**Signature:**
+
+```typescript
+// sync version
+Result.from(factory: () => Result<U> | V): Result<U> | Ok<V>
+// async version
+Result.from(factory: () => Promise<Result<U> | V>): Result<U> | Ok<V>
+```
+
+**Examples:**
+
+```typescript
+import { Result, Err } from 'type-safe-errors';
+
+const fetchOkResult = Result.from(async () => fetchRemoteData());
+
+class FetchFailedError {
+  __brand: "FetchFailed";
+}
+
+const fetchDataOrErrorResult = Result.from(async () => {
+  const res = fetchRemoteData();
+  if (res.ok) {
+    return res.data;
+  } else {
+    return Err.of(new FetchFailedError()); 
+  }
+});
 ```
 
 ---
