@@ -1,4 +1,4 @@
-export { UserCard, MissingPrice, InvalidCVC, Product };
+export { UserCard, MissingPriceError, InvalidCVCError, Product };
 
 interface UserCard {
   number: string;
@@ -9,10 +9,10 @@ interface Product {
   price: number | null;
 }
 
-class InvalidCVC extends Error {
+class InvalidCVCError extends Error {
   name = 'InvalidCVC' as const;
 }
 
-class MissingPrice extends Error {
+class MissingPriceError extends Error {
   name = 'MissingPrice' as const;
 }

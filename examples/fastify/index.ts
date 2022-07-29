@@ -2,7 +2,11 @@ import { fastify } from 'fastify';
 import { Result } from 'type-safe-errors';
 
 import { getProductPrice, payForProduct } from './pay';
-import { InvalidCVC, UknownProduct, MissingCardNumber } from './errors';
+import {
+  InvalidCVCError,
+  UknownProductError,
+  MissingCardNumberError,
+} from './errors';
 
 interface PaymentRequestBody {
   cardNumber: string;
@@ -20,13 +24,13 @@ app.post<{ Body: PaymentRequestBody }>('/payments', async (req, reply) => {
     .map((successResult) => {
       reply.status(200).send({ message: successResult });
     })
-    .mapErr(InvalidCVC, () => {
+    .mapErr(InvalidCVCError, () => {
       reply.status(422).send({ message: 'Invalid card CVC' });
     })
-    .mapErr(UknownProduct, () => {
+    .mapErr(UknownProductError, () => {
       reply.status(404).send({ message: `Product '${productId}' not found` });
     })
-    .mapErr(MissingCardNumber, () => {
+    .mapErr(MissingCardNumberError, () => {
       reply
         .status(400)
         .send({ message: `Invalid card number: '${cardNumber}'` });

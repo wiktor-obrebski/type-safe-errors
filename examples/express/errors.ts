@@ -1,13 +1,13 @@
-export { InvalidCVC, UknownProduct, MissingCardNumber };
+export { InvalidCVCError, UknownProductError, MissingCardNumberError };
 
-class InvalidCVC extends Error {
+class InvalidCVCError extends Error {
   name = 'InvalidCVC' as const;
 }
 
-class UknownProduct extends Error {
+class UknownProductError extends Error {
   name = 'UknownProduct' as const;
 }
 
-class MissingCardNumber extends Error {
+class MissingCardNumberError extends Error {
   name = 'MissingCardNumber' as const;
 }
