@@ -79,13 +79,13 @@ Ok<TOk>.promise(): Promise<TOk>
 
 ```typescript
 import { Ok, Err } from 'type-safe-errors';
-import { UserNotFound } from './errors';
+import { UserNotFoundError } from './errors';
 
 async function promiseResolver() {
   const number5 = await Ok.of(5).promise();
 
   // the line below will not compile, giving you fast feedback about the problem
-  await Err.of(new UserNotFound()).promise();
+  await Err.of(new UserNotFoundError()).promise();
 }
 ```
 
@@ -113,10 +113,10 @@ Err.of<TError>(value: TError): Err<TError>
 import { Err } from 'type-safe-errors';
 
 class UserNotFoundError extends Error {
-  name = "UserNotFound" as const;
+  name = "UserNotFoundError" as const;
 }
 
-const errResult = Err.of(new UserNotFound());
+const errResult = Err.of(new UserNotFoundError());
 ```
 
 ---
@@ -202,8 +202,8 @@ import { Result, Err } from 'type-safe-errors';
 
 const fetchOkResult = Result.from(async () => fetchRemoteData());
 
-class FetchFailedError {
-  __brand: "FetchFailed";
+class FetchFailedError extends Error {
+  name = "FetchFailedError" as const;
 }
 
 const fetchDataOrErrorResult = Result.from(async () => {
@@ -244,14 +244,14 @@ Err<TErr>.map<unknown>(callback: (value: never) => never): Err<TErr>;
 import { Ok, Err } from 'type-safe-errors';
 
 class UserNotFoundError extends Error {
-  name = "UserNotFound" as const;
+  name = "UserNotFoundError" as const;
 }
 
 const okOfNumber5 = Ok.of(10).map(value => value / 2);
 
-const errOfUserNotFound = Ok.of(10).map(value => Err.of(new UserNotFound()));
+const errOfUserNotFound = Ok.of(10).map(value => Err.of(new UserNotFoundError()));
 
-const originErr = Err.of(new UserNotFound());
+const originErr = Err.of(new UserNotFoundError());
 const sameOriginErr = originErr.map(val => val + 5);
 ```
 
@@ -278,23 +278,23 @@ Ok<TOk>.mapErr<unknown>(classType: unknown, callback: (value: never) => never): 
 
 ```typescript
 import { Ok, Err } from 'type-safe-errors';
-import { UserNotFound, Http404Error } from './errors';
+import { UserNotFoundError, Http404Error } from './errors';
 
 const defaultUser = {
   name: 'John Doe',
 }
 
-const okOfDefaultUser = Err.of(new UserNotFound())
-  .mapErr(UserNotFound, err => defaultUser);
+const okOfDefaultUser = Err.of(new UserNotFoundError())
+  .mapErr(UserNotFoundError, err => defaultUser);
 
-const errOfHttp404 = Err.of(new UserNotFound())
-  .mapErr(UserNotFound, err => Err.of(new Http404Error()));
+const errOfHttp404 = Err.of(new UserNotFoundError())
+  .mapErr(UserNotFoundError, err => Err.of(new Http404Error()));
 
-const errOfUserNotFound = Err.of(new UserNotFound())
+const errOfUserNotFound = Err.of(new UserNotFoundError())
   .mapErr(Http404Error, err => 123);
 
 const originOk = Ok.of(5);
-const okOfNumber5 = originOk.mapErr(UserNotFound, err => null);
+const okOfNumber5 = originOk.mapErr(UserNotFoundError, err => null);
 ```
 
 ---
@@ -320,16 +320,16 @@ Ok<TOk>.mapAnyErr<unknown>(callback: (value: never) => never): Ok<TOk>
 
 ```typescript
 import { Ok, Err } from 'type-safe-errors';
-import { UserNotFound, Http404Error } from './errors';
+import { UserNotFoundError, Http404Error } from './errors';
 
 const defaultUser = {
   name: 'John Doe',
 }
 
-const okOfDefaultUser = Err.of(new UserNotFound())
+const okOfDefaultUser = Err.of(new UserNotFoundError())
   .mapAnyErr(err => defaultUser);
 
-const errOfHttp404 = Err.of(new UserNotFound())
+const errOfHttp404 = Err.of(new UserNotFoundError())
   .mapAnyErr(err => Err.of(new Http404Error()));
 
 const originOk = Ok.of(5);
@@ -361,14 +361,14 @@ Err<TErr>.unsafePromise(): Promise<never>
 
 ```typescript
 import { Ok, Err } from 'type-safe-errors';
-import { UserNotFound } from './errors';
+import { UserNotFoundError } from './errors';
 
 async function promiseResolver() {
   const number5 = await Ok.of(5).unsafePromise();
 
-  // the line below will throw `UserNotFound` exception,
+  // the line below will throw `UserNotFoundError` error,
   // as the promise will reject
-  await Err.of(new UserNotFound()).unsafePromise();
+  await Err.of(new UserNotFoundError()).unsafePromise();
 }
 ```
 

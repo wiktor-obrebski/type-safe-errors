@@ -2,7 +2,7 @@ import { Result, Ok, Err } from '../index';
 import { shouldEventuallyOk, shouldEventuallyErr } from './helper';
 
 class Error1 {
-  __brand!: 'Error1';
+  name = 'Error1' as const;
 }
 
 suite('Result.from of single Ok result factory', () => {

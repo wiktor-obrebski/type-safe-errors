@@ -1,6 +1,6 @@
 import { Result } from 'type-safe-errors';
 import { payForProduct } from './pay';
-import { MissingPrice, InvalidCVC } from './types';
+import { MissingPriceError, InvalidCVCError } from './types';
 
 const userCard = {
   number: '1234',
@@ -12,10 +12,10 @@ const product = {
 };
 
 const paymentResult = Result.from(() => payForProduct(userCard, product))
-  .mapErr(InvalidCVC, () => {
+  .mapErr(InvalidCVCError, () => {
     return 'Your card do not have proper CVC code';
   })
-  .mapErr(MissingPrice, () => {
+  .mapErr(MissingPriceError, () => {
     return 'Product do not have price';
   });
 

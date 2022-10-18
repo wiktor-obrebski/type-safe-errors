@@ -25,7 +25,7 @@ npm i type-safe-errors
 import { Ok, Err } from 'type-safe-errors';
 
 class InvalidCredentialsError extends Error {
-  name = 'InvalidCredentials' as const;
+  name = 'InvalidCredentialsError' as const;
 }
 
 function authorizeUser(username: string, password: string) {
@@ -56,7 +56,7 @@ It's common case to start results chain from an async call, e.g. call to your da
 import { Ok, Err, Result } from 'type-safe-errors';
 
 class InvalidCredentialsError {
-  __brand: 'InvalidCredentials';
+  name = 'InvalidCredentialsError' as const;
 }
 
 async function authorizeUser(username: string, password: string) {
