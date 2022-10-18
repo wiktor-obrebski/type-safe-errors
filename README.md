@@ -55,7 +55,7 @@ It's common case to start results chain from an async call, e.g. call to your da
 ```ts
 import { Ok, Err, Result } from 'type-safe-errors';
 
-class InvalidCredentialsError {
+class InvalidCredentialsError extends Error {
   name = 'InvalidCredentialsError' as const;
 }
 
