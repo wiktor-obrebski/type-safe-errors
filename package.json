@@ -1,6 +1,6 @@
 {
   "name": "type-safe-errors",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Simple type-safe errors for TypeScript",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -17,7 +17,7 @@
     "url": "git+https://github.com/wiktor-obrebski/type-safe-errors.git"
   },
   "author": "Wiktor Obrebski",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/wiktor-obrebski/type-safe-errors/issues"
   },
