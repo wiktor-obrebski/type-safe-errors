@@ -7,7 +7,7 @@ It comes with an async promise-like interface but with strong-typed handleable e
 ## Table Of Contents
 
 * [Installation](#installation)
-* [Philosphy](#philosphy)
+* [Philosophy](#philosophy)
 * [Examples](./examples)
 * [API Reference](./docs/REFERENCE.md)
 * [Inspiration](#inspiration)
@@ -109,7 +109,7 @@ This is the problem that `type-safe-errors` library is trying to solve.
 
 (Full example: [./examples/basic-example](./examples/basic-example))
 
-## Philosphy
+## Philosophy
 
 ### Minimal API
 Learning and using `type-safe-errors` should be simple and straightforward. To achieve this, the API must be as simple and as intuitive as possible. It's one of the reasons why the result class is always async (e.g. [neverthrow](https://github.com/supermacro/neverthrow) have two different result types, one for sync and one for async results handling).
