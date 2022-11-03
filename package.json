@@ -1,6 +1,6 @@
 {
   "name": "type-safe-errors",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "Simple type-safe errors for TypeScript",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -36,6 +36,9 @@
     "Exception"
   ],
   "homepage": "https://github.com/wiktor-obrebski/type-safe-errors#readme",
+  "dependencies": {
+    "tslib": "^2.4.1"
+  },
   "devDependencies": {
     "@types/chai": "^4.3.1",
     "@types/mocha": "^9.1.1",
@@ -49,7 +52,6 @@
     "mocha": "^10.0.0",
     "prettier": "^2.7.1",
     "ts-node": "^10.9.1",
-    "tslib": "^2.4.0",
     "typescript": "^4.7.4"
   },
   "files": [
