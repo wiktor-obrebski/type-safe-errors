@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { Result } from '../result-helpers';
+import { Result } from '../types/result-helpers';
 
 export { shouldEventuallyOk, shouldEventuallyErr };
 

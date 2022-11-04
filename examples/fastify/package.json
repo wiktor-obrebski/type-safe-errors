@@ -4,7 +4,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "fastify": "^4.3.0",
+    "fastify": "^4.9.2",
     "type-safe-errors": "file:../.."
   },
   "devDependencies": {
