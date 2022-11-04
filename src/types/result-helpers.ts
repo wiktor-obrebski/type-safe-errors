@@ -1,6 +1,6 @@
-import { ResultWrapper } from './result-wrapper';
+import type { ResultWrapper } from './common-result';
 
-export {
+export type {
   Result,
   AClass,
   Ok,

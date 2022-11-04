@@ -6,7 +6,16 @@
 
     "baseUrl": ".",
     "esModuleInterop": true,
-    "importHelpers": true,
+    /*
+     * intentionally choose to not import helpers
+     * to avoid `tslib` dependency.
+     * all non-test code of this lib is designed to not use any
+     * syntaxt that require this helpers, so the library bundle size
+     * can stay significantly smaller.
+     * check https://bundlephobia.com/package/type-safe-errors@0.2.7
+     * to compare size with and without `tslib` dep
+     */
+    "importHelpers": false,
     "module": "commonjs",
     "removeComments": false,
     "sourceMap": true,
