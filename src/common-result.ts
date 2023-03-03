@@ -1,7 +1,12 @@
-import { Result } from './types/result-helpers';
-import { CommonResult, ResultWrapper } from './types/common-result';
+import { Result, CommonResult, ResultWrapper } from './types/result-helpers';
 
-export { CommonResult, isResult, commonResultFactory, resultWrapperFactory };
+export {
+  CommonResult,
+  isResult,
+  commonResultFactory,
+  resultWrapperFactory,
+  wrap,
+};
 
 const CommonResultPrototype: CommonResult<unknown> = {
   __value: Promise.resolve(resultWrapperFactory(undefined, false)),
@@ -13,17 +18,9 @@ const CommonResultPrototype: CommonResult<unknown> = {
         return wrapper;
       }
 
-      return Promise.resolve()
-        .then(() => mapper(wrapper.value as any))
-        .then((newValue) => {
-          if (isResult(newValue)) {
-            return newValue.__value;
-          } else {
-            return resultWrapperFactory(newValue, false);
-          }
-        })
-        .catch((err) => resultWrapperFactory(err, true));
+      return Promise.resolve().then(() => wrap(mapper(wrapper.value as any)));
     });
+
     return commonResultFactory(newValWrapperPromise) as any;
   },
 
@@ -33,17 +30,9 @@ const CommonResultPrototype: CommonResult<unknown> = {
         return wrapper;
       }
 
-      return Promise.resolve()
-        .then(() => mapper(wrapper.value as any))
-        .then((newValue) => {
-          if (isResult(newValue)) {
-            return newValue.__value;
-          } else {
-            return resultWrapperFactory(newValue, false);
-          }
-        })
-        .catch((err) => resultWrapperFactory(err, true));
+      return Promise.resolve().then(() => wrap(mapper(wrapper.value as any)));
     });
+
     return commonResultFactory(newValWrapperPromise) as any;
   },
 
@@ -53,17 +42,9 @@ const CommonResultPrototype: CommonResult<unknown> = {
         return wrapper;
       }
 
-      return Promise.resolve()
-        .then(() => mapper(wrapper.value as any))
-        .then((newValue) => {
-          if (isResult(newValue)) {
-            return newValue.__value;
-          } else {
-            return resultWrapperFactory(newValue, false);
-          }
-        })
-        .catch((err) => resultWrapperFactory(err, true));
+      return Promise.resolve().then(() => wrap(mapper(wrapper.value as any)));
     });
+
     return commonResultFactory(newValWrapperPromise) as any;
   },
 
@@ -97,4 +78,14 @@ function resultWrapperFactory<TErrorOrValue>(
   isError: boolean
 ): ResultWrapper<TErrorOrValue> {
   return { value, isError };
+}
+
+function wrap(value: unknown) {
+  const valuePromise = Promise.resolve(value);
+
+  return valuePromise
+    .then((result) =>
+      isResult(result) ? result.__value : resultWrapperFactory(result, false)
+    )
+    .catch((err) => resultWrapperFactory(err, true));
 }

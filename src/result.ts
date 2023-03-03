@@ -1,7 +1,7 @@
 import {
   commonResultFactory,
   resultWrapperFactory,
-  isResult,
+  wrap,
 } from './common-result';
 import { ResultNamespace, OkNamespace, ErrNamespace } from './types/result';
 
@@ -9,30 +9,16 @@ export { Ok, OkNamespace, Err, ErrNamespace, Result, ResultNamespace };
 
 const Result: ResultNamespace = {
   from(value) {
-    const valuePromise = Promise.resolve(
-      typeof value === 'function' ? value() : value
-    );
-
-    const resultWrapperPromise = valuePromise.then((result) => {
-      if (isResult(result)) {
-        return result.__value;
-      } else {
-        return resultWrapperFactory(result, false);
-      }
-    });
-
-    return commonResultFactory(resultWrapperPromise) as any;
+    const wrapperPromise = wrap(typeof value === 'function' ? value() : value);
+    return commonResultFactory(wrapperPromise) as any;
   },
 
   combine(results) {
-    const resultsPromise = Promise.resolve(results);
+    const wrapperPromises = results.map((result) => wrap(result));
 
-    const wrappersPromise = resultsPromise.then((results) =>
-      Promise.all(results.map((res) => res.__value))
-    );
-
-    const resultPromise = wrappersPromise.then((wrappers) => {
+    const resultPromise = Promise.all(wrapperPromises).then((wrappers) => {
       const values = [];
+
       for (const wrapper of wrappers) {
         if (wrapper.isError) {
           return { ...wrapper } as any;
@@ -40,10 +26,11 @@ const Result: ResultNamespace = {
           values.push(wrapper.value);
         }
       }
-      return { isError: false, value: values };
+
+      return resultWrapperFactory(values, false);
     });
 
-    return commonResultFactory(resultPromise);
+    return commonResultFactory(resultPromise) as any;
   },
 };
 
