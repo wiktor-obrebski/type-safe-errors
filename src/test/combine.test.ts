@@ -1,5 +1,9 @@
 import { Result, Ok, Err } from '../index';
-import { shouldEventuallyOk, shouldEventuallyErr } from './helper';
+import {
+  shouldEventuallyOk,
+  shouldEventuallyErr,
+  shouldBeAssignable,
+} from './helper';
 
 class Error1 extends Error {
   name = 'Error1' as const;
@@ -56,4 +60,29 @@ test('Result combine of mixed types per Result returns expected result', (done) 
   ]);
 
   shouldEventuallyOk(mapped, ['return-type', 5], done);
+});
+
+test('Result.combine of results with possibly undefined values preserves possibly undefined values', (done) => {
+  const result = Result.combine([
+    Ok.of<string | undefined>(undefined),
+    Ok.of<number | undefined>(5),
+  ]);
+
+  shouldBeAssignable(result, Ok.of<[string, number]>(['hello', 1]));
+  shouldBeAssignable(
+    result,
+    Ok.of<[undefined, undefined]>([undefined, undefined])
+  );
+  shouldEventuallyOk(result, [undefined, 5], done);
+});
+
+test('Result.combine of results with nullable values preserves nullable values', (done) => {
+  const result = Result.combine([
+    Ok.of<string | null>(null),
+    Ok.of<number | null>(5),
+  ]);
+
+  shouldBeAssignable(result, Ok.of<[string, number]>(['hello', 1]));
+  shouldBeAssignable(result, Ok.of<[null, null]>([null, null]));
+  shouldEventuallyOk(result, [null, 5], done);
 });
