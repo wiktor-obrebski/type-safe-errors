@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { Result } from '../types/result-helpers';
 
-export { shouldEventuallyOk, shouldEventuallyErr };
+export { shouldEventuallyOk, shouldEventuallyErr, shouldBeAssignable };
 
 async function shouldEventuallyOk<TValue>(
   result: Result<unknown, unknown>,
@@ -40,3 +40,6 @@ async function shouldEventuallyErr<TValue>(
     done(`Err result expected (${value}), got Ok result`);
   }
 }
+
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+function shouldBeAssignable<T>(_to: T, _value: T) {}

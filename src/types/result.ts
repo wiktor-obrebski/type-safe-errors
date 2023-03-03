@@ -61,17 +61,9 @@ type ExtractErrTypes<T extends readonly ResultType<unknown, unknown>[]> = {
 type ExtractOkFromUnion<T extends ResultType<unknown, unknown>> = T extends Ok<
   infer V
 >
-  ? // eslint-disable-next-line @typescript-eslint/ban-types
-    V extends {} // filter out "unknown" values
-    ? V
-    : never
+  ? V
   : never;
 
 // need to be separated generic type to run it for every element of union T separately
 type ExtractErrFromUnion<T extends ResultType<unknown, unknown>> =
-  T extends Err<infer E>
-    ? // eslint-disable-next-line @typescript-eslint/ban-types
-      E extends {} // filter out "unknown" values
-      ? E
-      : never
-    : never;
+  T extends Err<infer E> ? E : never;
