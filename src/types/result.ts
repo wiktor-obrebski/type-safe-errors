@@ -21,7 +21,7 @@ interface ResultNamespace {
    * @returns Result Ok of all input Ok values, or Err Result of one of provided Err values.
    */
   combine<T extends readonly ResultType<unknown, unknown>[]>(
-    results: [...T]
+    results: [...T] | Promise<[...T]>
   ): SpreadErrors<ResultType<ExtractOkTypes<T>, ExtractErrTypes<T>[number]>>;
 }
 

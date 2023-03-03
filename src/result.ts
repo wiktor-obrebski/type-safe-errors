@@ -25,7 +25,12 @@ const Result: ResultNamespace = {
   },
 
   combine(results) {
-    const wrappersPromise = Promise.all(results.map((res) => res.__value));
+    const resultsPromise = Promise.resolve(results);
+
+    const wrappersPromise = resultsPromise.then((results) =>
+      Promise.all(results.map((res) => res.__value))
+    );
+
     const resultPromise = wrappersPromise.then((wrappers) => {
       const values = [];
       for (const wrapper of wrappers) {
