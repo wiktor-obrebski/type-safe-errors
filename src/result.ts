@@ -8,9 +8,12 @@ import { ResultNamespace, OkNamespace, ErrNamespace } from './types/result';
 export { Ok, OkNamespace, Err, ErrNamespace, Result, ResultNamespace };
 
 const Result: ResultNamespace = {
-  from(factory) {
-    const factoryPromise = Promise.resolve(factory());
-    const resultWrapperPromise = factoryPromise.then((result) => {
+  from(value) {
+    const valuePromise = Promise.resolve(
+      typeof value === 'function' ? value() : value
+    );
+
+    const resultWrapperPromise = valuePromise.then((result) => {
       if (isResult(result)) {
         return result.__value;
       } else {

@@ -96,3 +96,41 @@ suite('Result.from of single Ok result factory', () => {
     shouldEventuallyOk(mapped, 'test-ok', done);
   });
 });
+
+suite('Result.from of result promise', () => {
+  test('returns mapped result with promise of a plain value', (done) => {
+    const mapped: Ok<number> = Result.from(Promise.resolve(5));
+
+    shouldEventuallyOk(mapped, 5, done);
+  });
+
+  test('returns mapped result with promise of ok result', (done) => {
+    const mapped: Ok<number> = Result.from(Promise.resolve(Ok.of(5)));
+
+    shouldEventuallyOk(mapped, 5, done);
+  });
+
+  test('returns mapped result with promise of err result', (done) => {
+    const err = new Error1();
+
+    const mapped: Err<Error1> = Result.from(Promise.resolve(Err.of(err)));
+
+    shouldEventuallyErr(mapped, err, done);
+  });
+
+  test('returns mapped result with promise of mixed results', (done) => {
+    const mapped: Result<number, Error1> = Result.from(
+      Promise.resolve(Ok.of(5)) as Promise<Result<number, Error1>>
+    );
+
+    shouldEventuallyOk(mapped, 5, done);
+  });
+
+  test('returns mapped result with promise of mixed plain values and err results', (done) => {
+    const mapped: Result<number, Error1> = Result.from(
+      Promise.resolve(5) as Promise<number | Result<never, Error1>>
+    );
+
+    shouldEventuallyOk(mapped, 5, done);
+  });
+});

@@ -9,7 +9,7 @@ import type {
 export type { ResultNamespace, OkNamespace, ErrNamespace };
 
 interface ResultNamespace {
-  from<R>(factory: () => R): MapFromResult<R>;
+  from<R>(factory: Promise<R> | (() => R)): MapFromResult<R>;
 
   /**
    * Combine provided Results list into single Result. If all provided Results
