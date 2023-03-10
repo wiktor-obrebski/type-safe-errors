@@ -35,7 +35,7 @@ const Result: ResultNamespace = {
       return { isError: false, value: values };
     });
 
-    return commonResultFactory(resultPromise);
+    return commonResultFactory(resultPromise) as any;
   },
 };
 
