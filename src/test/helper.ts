@@ -41,5 +41,36 @@ async function shouldEventuallyErr<TValue>(
   }
 }
 
+/**
+ * Check if two values are compatible, can `value` be assigned to `to`.
+ *
+ * Most of the time we can verify the type of an operation by providing
+ * an explicit expected type, e.g.
+ *
+ * ```ts
+ * const action = () => 1
+ * const actual: string = action()
+ * ```
+ *
+ * The test will fail type checks, because `number` cannot be assigned to `string`.
+ * However, when the expected type is a superset of the returned type, e.g.
+ *
+ * ```ts
+ * const actual: string | number = action()
+ * ```
+ *
+ * Such a test won't ensure that `action()` returns exactly `string | number`,
+ * since `number` can be assigned to `string | number`.
+ *
+ * Instead we can infer the `actual` value and check if we can assign all
+ * our expected types to it.
+ *
+ * ```ts
+ * const actual = action()
+ *
+ * shouldBeAssignable(actual, 2)  // pass
+ * shouldBeAssignable(actual, "") // fail, string cannot be assigned to number
+ * ```
+ */
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 function shouldBeAssignable<T>(_to: T, _value: T) {}
