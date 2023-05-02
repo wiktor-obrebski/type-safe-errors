@@ -22,6 +22,8 @@ npm i type-safe-errors
 
 ### Basic example
 
+In this example, we demonstrate how to use the `type-safe-errors` library to handle user authorization with a simple username and password check.
+
 ```ts
 import { Ok, Err } from 'type-safe-errors';
 
@@ -32,11 +34,13 @@ class InvalidCredentialsError extends Error {
 // Function to authorize a user based on their username and password
 function authorizeUser(username: string, password: string) {
   if (username === 'admin' && password === 'admin') {
+    // Return an Ok result with the user information
     return Ok.of({
       name: 'admin',
       isAdmin: true,
     });
   } else {
+    // Return an Err result with an InvalidCredentialsError instance
     return Err.of(new InvalidCredentialsError());
   }
 }
@@ -65,22 +69,34 @@ class InvalidCredentialsError extends Error {
   name = 'InvalidCredentialsError' as const;
 }
 
+class UserNotFoundError extends Error {
+  name = 'UserNotFoundError' as const;
+}
+
 async function authorizeUser(username: string, password: string) {
+  if (username !== 'admin') {
+    return Err.of(new UserNotFoundError());
+  }
+
   // simulate async call
   const storedPassword = await Promise.resolve('admin');
-  if (username === 'admin' && password === storedPassword) {
-    return Ok.of({
-      name: 'admin',
-      isAdmin: true,
-    });
-  } else {
+  if (password !== storedPassword) {
     return Err.of(new InvalidCredentialsError());
   }
+
+  return Ok.of({
+    name: 'admin',
+    isAdmin: true,
+  });
 }
 
 Result.from(() => authorizeUser('admin', 'admin'))
   .map((user) => {
     console.log('authorized! hello ', user.name);
+  })
+  .mapErr(UserNotFoundError, (err) => {
+    // err is fully typed err object (UserNotFoundError class instance)
+    console.log('Invalid user name!', err);
   })
   .mapErr(InvalidCredentialsError, (err) => {
     // err is fully typed err object (InvalidCredentialsError class instance)
