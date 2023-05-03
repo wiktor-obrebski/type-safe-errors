@@ -1,6 +1,8 @@
 # API Reference
 
-`type-safe-errors` exposes three class-like abstractions: `Ok`, `Err`, and `Result`.
+`type-safe-errors` exposes three class-like abstractions: [Ok](#ok), [Err](#err), and [Result](#resut).
+
+For an introduction to the type-safe-errors library and its benefits, please refer to the [README](../README.md).  For framework-specific examples, please refer to the [Framework Examples](../examples) directory.
 
 ## Ok
 An `Ok` object represents a valid result of an action.
