@@ -1,13 +1,14 @@
 # API Reference
 
-`type-safe-errors` expose only three class-like abstraction: `Ok`, `Err` and `Result`.
+`type-safe-errors` exposes three class-like abstractions: `Ok`, `Err`, and `Result`.
 
 ## Ok
-`Ok` objects represents a valid result of an action.
+An `Ok` object represents a valid result of an action.
 
 ### Ok.of(...)
 
-Create new `Ok` result. Static function (can be called only on imported `Ok` namespace, not on `Ok` results).
+Creates a new `Ok` result. It is a static function, meaning it can only be called on the imported `Ok` namespace and not on `Ok` result instances.
+
 
 The operation is the results version of [Promise.resolve](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/resolve) function.
 
@@ -23,8 +24,8 @@ Ok.of<TValue>(value: TValue): Ok<TValue>
 import { Ok } from 'type-safe-errors';
 
 const okResult = Ok.of({
-  name: "John",
-  surname: "Doe"
+  name: 'John',
+  surname: 'Doe'
 });
 ```
 
@@ -32,8 +33,7 @@ const okResult = Ok.of({
 
 ### ok.map(callback)
 
-Map `Ok` result to a different result.
-Interface common for both types of results: [result.map(callback)](#resultmapcallback)
+Transforms an `Ok` result into a different result using the provided callback function. This interface is common for both `Ok` and `Err` results: [result.map(callback)](#resultmapcallback)
 
 The operation is the results version of [Promise.prototype.then](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/then) function.
 
@@ -41,8 +41,7 @@ The operation is the results version of [Promise.prototype.then](https://develop
 
 ### ok.mapErr(ErrorClass, callback)
 
-Do nothing for `Ok` results.
-Interface common for both types of results: [result.mapErr(ErrorClass, callback)](#resultmaperrerrorclass-callback)
+No operation is performed for `Ok` results. This interface is common for both `Ok` and `Err` results: [result.mapErr(ErrorClass, callback)](#resultmaperrerrorclass-callback)
 
 ---
 
@@ -93,11 +92,11 @@ async function promiseResolver() {
 
 
 ## Err
-`Err` represents an invalid result of an action.
+An `Err` object represents an invalid result of an action.
 
 ### Err.of(...)
 
-Create new `Err` result. Static function (can be called only on imported `Err` namespace, not on `Err` results).
+Creates a new `Err` result. It is a static function, meaning it can only be called on the imported `Err` namespace and not on `Err` result instances.
 
 The operation is the results version of [Promise.reject](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/reject) function.
 
@@ -113,7 +112,7 @@ Err.of<TError>(value: TError): Err<TError>
 import { Err } from 'type-safe-errors';
 
 class UserNotFoundError extends Error {
-  name = "UserNotFoundError" as const;
+  name = 'UserNotFoundError' as const;
 }
 
 const errResult = Err.of(new UserNotFoundError());
@@ -123,8 +122,7 @@ const errResult = Err.of(new UserNotFoundError());
 
 ### err.map(callback)
 
-Do nothing for `Err` results.
-Interface common for both types of results: [result.map(callback)](#resultmapcallback)
+No operation is performed for `Err` results. This interface is common for both `Ok` and `Err` results: [result.map(callback)](#resultmapcallback)
 
 ---
 
@@ -151,11 +149,11 @@ Interface common for both types of results: [result.unsafePromise()](#resultunsa
 
 ## Result
 
-`Result` provide static utility functions to work with multiple results.
+`Result` provides static utility functions to work with multiple results.
 
 ### Result.combine([result1, result2, ...])
 
-Combine provided results list into single result. If all provided results are `Ok`, returned result will be `Ok` of array of provided results values: `[Ok<A>, Ok<B>] -> Ok<[A, B]>`  
+Combines a list of provided results into a single result. If all provided results are `Ok`, the returned result will be an `Ok` containing an array of values from the provided results: `[Ok<A>, Ok<B>] -> Ok<[A, B]>`.  
 If provided results list have at least one `Err` result, returned result will be `Err` of first `Err` result value found in the array.
 
 The operation is the results version of [Promise.all](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all) function.
@@ -203,7 +201,7 @@ import { Result, Err } from 'type-safe-errors';
 const fetchOkResult = Result.from(async () => fetchRemoteData());
 
 class FetchFailedError extends Error {
-  name = "FetchFailedError" as const;
+  name = 'FetchFailedError' as const;
 }
 
 const fetchDataOrErrorResult = Result.from(async () => {
@@ -211,7 +209,7 @@ const fetchDataOrErrorResult = Result.from(async () => {
   if (res.ok) {
     return res.data;
   } else {
-    return Err.of(new FetchFailedError()); 
+    return Err.of(new FetchFailedError());
   }
 });
 ```
@@ -219,7 +217,7 @@ const fetchDataOrErrorResult = Result.from(async () => {
 ---
 
 ## Results common interface
-`Ok` and `Err` are both results and share common interface.
+`Ok` and `Err` are both considered results and share a common interface.
 
 ### result.map(callback)
 
