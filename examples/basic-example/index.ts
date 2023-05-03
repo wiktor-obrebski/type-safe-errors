@@ -18,5 +18,4 @@ const paymentResult = Result.from(() => payForProduct(userCard, product))
   .mapErr(MissingPriceError, () => {
     return 'Product do not have price';
   });
-
 paymentResult.promise().then((resultText) => console.log(resultText));
