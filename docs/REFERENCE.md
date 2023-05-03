@@ -1,6 +1,6 @@
 # API Reference
 
-`type-safe-errors` exposes three class-like abstractions: [Ok](#ok), [Err](#err), and [Result](#resut).
+`type-safe-errors` exposes three class-like abstractions: [Ok](#ok), [Err](#err), and [Result](#result).
 
 For an introduction to the type-safe-errors library and its benefits, please refer to the [README](../README.md).  For framework-specific examples, please refer to the [Framework Examples](../examples) directory.
 
@@ -39,11 +39,33 @@ Transforms an `Ok` result into a different result using the provided callback fu
 
 The operation is the results version of [Promise.prototype.then](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/then) function.
 
+**Examples:**
+
+```ts
+import { Ok } from 'type-safe-errors';
+
+const okResult = Ok.of(5);
+// Ok.of(10)
+const doubledOkResult = okResult.map(value => value * 2); 
+```
+
 ---
 
 ### ok.mapErr(ErrorClass, callback)
 
 No operation is performed for `Ok` results. This interface is common for both `Ok` and `Err` results: [result.mapErr(ErrorClass, callback)](#resultmaperrerrorclass-callback)
+
+**Examples:**
+
+```ts
+import { Ok } from 'type-safe-errors';
+import { UserNotFoundError } from './errors';
+
+const okResult = Ok.of(5);
+// No operation is performed, the original Ok result is returned
+const sameOkResult = okResult.mapErr(UserNotFoundError, err => 123); 
+
+```
 
 ---
 
@@ -54,21 +76,40 @@ Interface common for both types of results: [result.mapAnyErr(callback)](#result
 
 The operation is the results version of [Promise.prototype.catch](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/catch) function.
 
+**Examples:**
+
+```ts
+import { Ok } from 'type-safe-errors';
+
+const okResult = Ok.of(5);
+// No operation is performed, the original Ok result is returned
+const sameOkResult = okResult.mapAnyErr(err => 123); 
+
+```
+
 ---
 
 ### ok.unsafePromise()
 
-Map `Ok` to a fulfilled [promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise). 
-Interface common for both types of results: [result.unsafePromise()](#resultunsafePromise)
+Map an `Ok` result to a fulfilled [promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise).  
+This is a common interface for both `Ok` and `Err` results: [result.unsafePromise()](#resultunsafePromise).
+
+**Examples:**
+
+```typescript
+import { Ok } from 'type-safe-errors';
+
+const okResult = Ok.of(5);
+const fulfilledPromise = okResult.unsafePromise(); // Promise resolves with value 5
+```
 
 ---
 
 ### ok.promise()
 
-Map an `Ok` result to a [promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise). The promise will resolve with origin `Ok` result value.
+Map an `Ok` result to a [promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise). The promise will resolve with the original `Ok` result value.
 
-This is only one function that is not available for `Err` results by design.
-It's purpose is to allow to detect unhandled `Err` results that can appear in the results chain in the future.
+This function is intentionally unavailable for `Err` results to help detect unhandled `Err` results that might appear in the results chain later on.
 
 **Signature:**
 
@@ -85,7 +126,7 @@ import { UserNotFoundError } from './errors';
 async function promiseResolver() {
   const number5 = await Ok.of(5).promise();
 
-  // the line below will not compile, giving you fast feedback about the problem
+  // The line below will not compile, providing quick feedback about the issue
   await Err.of(new UserNotFoundError()).promise();
 }
 ```
@@ -126,26 +167,77 @@ const errResult = Err.of(new UserNotFoundError());
 
 No operation is performed for `Err` results. This interface is common for both `Ok` and `Err` results: [result.map(callback)](#resultmapcallback)
 
+**Examples:**
+
+```ts
+import { Ok } from 'type-safe-errors';
+import { UserNotFoundError } from './errors';
+
+const errResult = Err.of(new UserNotFoundError());
+// No operation is performed, the original Err result is returned
+const sameErrResult = errResult.map(err => 123); 
+```
+
 ---
 
 ### err.mapErr(ErrorClass, callback)
 
-Map `Err` result of specified class to a different result.
+Map the `Err` result of specified class to a different result.
 Interface common for both types of results: [result.mapErr(ErrorClass, callback)](#resultmaperrerrorclass-callback)
+
+**Examples:**
+
+```ts
+import { Ok } from 'type-safe-errors';
+import { UserNotFoundError, Http404Error } from './errors';
+
+const errResult = Err.of(new UserNotFoundError());
+
+// Ok.of('User not found')
+const sameErrResult = errResult.mapErr(UserNotFoundError, err => 'User not found'); 
+
+// Err result of Http404Error is returned
+const httpErrResult = errResult.mapErr(UserNotFoundError, err => Err.of(new Http404Error())); 
+```
 
 ---
 
 ### err.mapAnyErr(callback)
 
-Map `Err` result to a different result.
+Map the `Err` result to a different result.
 Interface common for both types of results: [result.mapAnyErr(callback)](#resultmapanyerrcallback)
 
+**Examples:**
+
+```ts
+import { Ok } from 'type-safe-errors';
+import { UserNotFoundError, Http404Error } from './errors';
+
+const errResult = Err.of(new UserNotFoundError());
+
+// Ok.of('User not found')
+const sameErrResult = errResult.mapAnyErr(err => 'User not found'); 
+
+// Err result of Http404Error is returned
+const httpErrResult = errResult.mapAnyErr(err => Err.of(new Http404Error())); 
+```
 ---
 
 ### err.unsafePromise()
 
-Map `Err` to a rejected [promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise). 
-Interface common for both types of results: [result.unsafePromise()](#resultunsafePromise)
+Map an `Err` result to a rejected [promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise). This is a common interface for both `Ok` and `Err` results: [result.unsafePromise()](#resultunsafePromise).
+
+**Examples:**
+
+```typescript
+import { Err } from 'type-safe-errors';
+import { UserNotFoundError } from './errors';
+
+const errResult = Err.of(new UserNotFoundError());
+// Promise rejects with value of UserNotFoundError error instance
+const rejectedPromise = errResult.unsafePromise();
+
+```
 
 ---
 
@@ -168,6 +260,8 @@ Result.combine(results: [Result<A>, Result<B>, ...]): Result<[A, B, ...]>
 
 **Examples:**
 
+Successful example
+
 ```typescript
 import { Ok, Result } from 'type-safe-errors';
 
@@ -176,6 +270,21 @@ const ok2Result = Ok.of(9);
 const okSumResult = Result.combine([ok1Result, ok2Result]).map(
   ([val1, val2]) => val1 + val2
 )
+```
+
+An error example
+
+```typescript
+import { Ok, Result } from 'type-safe-errors';
+import { UserNotFoundError } from './errors';
+const ok1Result = Ok.of(5);
+const ok2Result = Ok.of(9);
+const errResult = Err.of(new UserNotFoundError());
+const okSumResult = Result.combine([ok1Result, errResult, ok2Result])
+  // never called
+  .map(([val1, val2]) => val1 + val2))
+  // called
+  .mapErr(UserNotFoundError, err => console.log('User not found!'))
 ```
 
 ---
@@ -223,7 +332,7 @@ const fetchDataOrErrorResult = Result.from(async () => {
 
 ### result.map(callback)
 
-Map given `Ok` result to another result. 
+Map the given `Ok` result to another result. 
 
 **Signature:**
 
@@ -259,15 +368,15 @@ const sameOriginErr = originErr.map(val => val + 5);
 
 ### result.mapErr(ErrorClass, callback)
 
-Map `Err` result of given class to another result. 
+Map the `Err` result of the given class to another result. 
 
 **Signature:**
 
 ```typescript
-// if `Err` is instance of `classType` and the `callback` return a value, the `mapErr` function will return Ok.of(value)
+// if `Err` result is instance of `classType` and the `callback` return a value, the `mapErr` function will return Ok.of(value)
 Err<TErr>.mapErr<TClass, TReturn>(classType: TClass, callback: (value: TErr) => TReturn): Ok<TReturn>
 
-// if `Err` is instance of `classType` and the `callback` return a `Result`, the `mapErr` function will return given `Result`
+// if `Err` result is instance of `classType` and the `callback` return a `Result`, the `mapErr` function will return given `Result`
 Err<TErr>.mapErr<TClass, TReturnResult>(classType: TClass, callback: (value: TErr) => TReturnResult): TReturnResult
 
 // called on an `Ok` result, the `mapErr` function will return origin `Ok` (the `callback` won't be called)
@@ -301,7 +410,7 @@ const okOfNumber5 = originOk.mapErr(UserNotFoundError, err => null);
 
 ### result.mapAnyErr(callback)
 
-Map `Err` result to another result. 
+Map the `Err` result to another result. 
 
 **Signature:**
 
@@ -353,7 +462,6 @@ Ok<TOk>.unsafePromise(): Promise<TOk>
 
 // called on an `Err` result, the `unsafePromise` function will return promise that will reject with `Err` result value
 Err<TErr>.unsafePromise(): Promise<never>
-
 
 ```
 
