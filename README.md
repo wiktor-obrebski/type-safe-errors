@@ -1,9 +1,15 @@
 # Type-safe errors in TypeScript
 
 ## Overview
-`type-safe-errors` provides type-safe domain-specific errors to Typescript.  
+`type-safe-errors` provides custom type-safe errors to Typescript.  
 
 The library offers an async promise-like interface and ensures type safety with easy-to-handle errors.
+
+## Motivation
+The type-safe-errors library was made to solve these problems:
+ - In TypeScript, when promises are rejected, they lose their error types. It's tough to keep these error types correct, and it gets even harder over time.
+ - Not all error in the code should lead to throws. Sometimes, it makes more sense to think of an error as just the result of some logic.
+For example, if there's a problem connecting to a database, that's a good time to use a throw. But an invalid password should be seen as a result of validation logic, not an exception
 
 ## Table Of Contents
 
@@ -31,7 +37,7 @@ class InvalidCredentialsError extends Error {
   name = 'InvalidCredentialsError' as const;
 }
 
-// Function to authorize a user based on their username and password
+// Function to authorize an user based on their username and password
 function authorizeUser(username: string, password: string) {
   if (username === 'admin' && password === 'admin') {
     // Return an Ok result with the user information
@@ -54,7 +60,11 @@ authorizeUser('admin', 'admin')
   .mapErr(InvalidCredentialsError, (err) => {
     // err is fully typed err object (InvalidCredentialsError class instance)
     console.log('Invalid credentials!', err);
-  });
+  })
+  // Map the result to classic promise
+  // This is optional, but highly recommended, as it allows TypeScript to detect 
+  // not handled errors, in current code and in the future
+  .promise();
 ```
 
 ### Async basic example
@@ -92,14 +102,15 @@ async function authorizeUser(username: string, password: string) {
 
 Result.from(() => authorizeUser('admin', 'admin'))
   .map((user) => {
+    // here `user` type is { name: string, isAdmin: boolean }, from `authorizeUser` return type
     console.log('authorized! hello ', user.name);
   })
   .mapErr(UserNotFoundError, (err) => {
-    // err is fully typed err object (UserNotFoundError class instance)
+    // here `err` is fully typed object of InvalidCredentialsError class
     console.log('Invalid user name!', err);
   })
   .mapErr(InvalidCredentialsError, (err) => {
-    // err is fully typed err object (InvalidCredentialsError class instance)
+    // here `err` is fully typed object of InvalidCredentialsError class
     console.log('Invalid credentials!', err);
   });
 
@@ -147,7 +158,8 @@ The long-term goal is not to handle every possible use case. Instead, it's to do
 ### Practical API
 Using `type-safe-erros` should be similar in feel to work with traditional js [promises](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise). You can [map](./docs/REFERENCE.md#okmapcallback) any success result (same like you can [then](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/then) fulfilled promise) or [mapAnyErr](./docs/REFERENCE.md#errmapanyerrcallback) (same as you can [catch](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/catch) rejected promise).
 
-You may notice that the `type-safe-error` project is somehow based on [Either](https://github.com/sanctuary-js/sanctuary-either) concept from functional programming. But the goal was not to follow the idea closely but to provide an easy-to-use API in practical js work, focused on async programming.
+You may notice that the `type-safe-error` project is somehow based on [Either](https://github.com/sanctuary-js/sanctuary-either) concept from functional programming. But the goal was not to follow the idea closely but to provide an easy-to-use API in practical TypeScript work, focused on async programming.
+
 
 ## Inspiration
  - [Expressive error handling in TypeScript and benefits for domain-driven design](https://medium.com/inato/expressive-error-handling-in-typescript-and-benefits-for-domain-driven-design-70726e061c86)

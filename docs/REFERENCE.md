@@ -29,6 +29,9 @@ const okResult = Ok.of({
   name: 'John',
   surname: 'Doe'
 });
+
+// you can force Ok type by providing first generic argument
+const okString = Ok.of<string>('Joe Doe');
 ```
 
 ---
@@ -89,22 +92,6 @@ const sameOkResult = okResult.mapAnyErr(err => 123);
 
 ---
 
-### ok.unsafePromise()
-
-Map an `Ok` result to a fulfilled [promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise).  
-This is a common interface for both `Ok` and `Err` results: [result.unsafePromise()](#resultunsafePromise).
-
-**Examples:**
-
-```typescript
-import { Ok } from 'type-safe-errors';
-
-const okResult = Ok.of(5);
-const fulfilledPromise = okResult.unsafePromise(); // Promise resolves with value 5
-```
-
----
-
 ### ok.promise()
 
 Map an `Ok` result to a [promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise). The promise will resolve with the original `Ok` result value.
@@ -129,6 +116,22 @@ async function promiseResolver() {
   // The line below will not compile, providing quick feedback about the issue
   await Err.of(new UserNotFoundError()).promise();
 }
+```
+
+---
+
+### ok.unsafePromise()
+
+Map an `Ok` result to a fulfilled [promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise).  
+This is a common interface for both `Ok` and `Err` results: [result.unsafePromise()](#resultunsafePromise).
+
+**Examples:**
+
+```typescript
+import { Ok } from 'type-safe-errors';
+
+const okResult = Ok.of(5);
+const fulfilledPromise = okResult.unsafePromise(); // Promise resolves with value 5
 ```
 
 ---
@@ -182,7 +185,8 @@ const sameErrResult = errResult.map(err => 123);
 
 ### err.mapErr(ErrorClass, callback)
 
-Map the `Err` result of specified class to a different result.
+Map the `Err` result of specified class to a different result. 
+If you don't explicitly return value of `Err` type it will be mapped to `Ok`.  
 Interface common for both types of results: [result.mapErr(ErrorClass, callback)](#resultmaperrerrorclass-callback)
 
 **Examples:**
@@ -194,7 +198,7 @@ import { UserNotFoundError, Http404Error } from './errors';
 const errResult = Err.of(new UserNotFoundError());
 
 // Ok.of('User not found')
-const sameErrResult = errResult.mapErr(UserNotFoundError, err => 'User not found'); 
+const okStringResult = errResult.mapErr(UserNotFoundError, err => 'User not found'); 
 
 // Err result of Http404Error is returned
 const httpErrResult = errResult.mapErr(UserNotFoundError, err => Err.of(new Http404Error())); 
@@ -204,7 +208,8 @@ const httpErrResult = errResult.mapErr(UserNotFoundError, err => Err.of(new Http
 
 ### err.mapAnyErr(callback)
 
-Map the `Err` result to a different result.
+Map any `Err` result to a different result.
+If you don't explicitly return value of `Err` type it will be mapped to `Ok`.  
 Interface common for both types of results: [result.mapAnyErr(callback)](#resultmapanyerrcallback)
 
 **Examples:**
@@ -216,7 +221,7 @@ import { UserNotFoundError, Http404Error } from './errors';
 const errResult = Err.of(new UserNotFoundError());
 
 // Ok.of('User not found')
-const sameErrResult = errResult.mapAnyErr(err => 'User not found'); 
+const okStringResult = errResult.mapAnyErr(err => 'User not found'); 
 
 // Err result of Http404Error is returned
 const httpErrResult = errResult.mapAnyErr(err => Err.of(new Http404Error())); 
@@ -410,7 +415,7 @@ const okOfNumber5 = originOk.mapErr(UserNotFoundError, err => null);
 
 ### result.mapAnyErr(callback)
 
-Map the `Err` result to another result. 
+Map any `Err` result to another result. 
 
 **Signature:**
 
