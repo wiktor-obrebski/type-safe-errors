@@ -1,11 +1,11 @@
 import { Result, Ok, Err } from '../index';
-import { shouldEventuallyOk, shouldEventuallyErr } from './helper';
+import { shouldEventuallyOk, shouldEventuallyErr, shouldEventuallyReject } from './helper';
 
 class Error1 {
   name = 'Error1' as const;
 }
 
-suite('Result.from of single Ok result factory', () => {
+suite('Result.from of an result factory', () => {
   test('returns maped result for mapper with plain return', (done) => {
     const mapped: Ok<'test-return'> = Result.from(() => {
       return 'test-return' as const;
@@ -94,5 +94,21 @@ suite('Result.from of single Ok result factory', () => {
     });
 
     shouldEventuallyOk(mapped, 'test-ok', done);
+  });
+
+  test('returns rejected result for throwing async mapper', (done) => {
+    const mapped: Result<never, never> = Result.from(async () => {
+      throw new Error('Something goes wrong');
+    });
+
+    shouldEventuallyReject(mapped, 'Something goes wrong', done);
+  });
+
+  test('returns rejected result for throwing sync mapper', (done) => {
+    const mapped: Result<never, never> = Result.from(() => {
+      throw new Error('Something goes wrong');
+    });
+
+    shouldEventuallyReject(mapped, 'Something goes wrong', done);
   });
 });

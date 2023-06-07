@@ -9,14 +9,16 @@ export { Ok, OkNamespace, Err, ErrNamespace, Result, ResultNamespace };
 
 const Result: ResultNamespace = {
   from(factory) {
-    const factoryPromise = Promise.resolve(factory());
-    const resultWrapperPromise = factoryPromise.then((result) => {
-      if (isResult(result)) {
-        return result.__value;
-      } else {
-        return resultWrapperFactory(result, false);
-      }
-    });
+    const factoryPromise = Promise.resolve().then(factory);
+    const resultWrapperPromise = factoryPromise
+      .then((result) => {
+        if (isResult(result)) {
+          return result.__value;
+        } else {
+          return resultWrapperFactory(result, false);
+        }
+      })
+      .catch((err) => resultWrapperFactory(err, true));
 
     return commonResultFactory(resultWrapperPromise) as any;
   },

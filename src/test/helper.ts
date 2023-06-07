@@ -1,7 +1,12 @@
 import { expect } from 'chai';
 import { Result } from '../types/result-helpers';
 
-export { shouldEventuallyOk, shouldEventuallyErr, shouldBeAssignable };
+export {
+  shouldEventuallyOk,
+  shouldEventuallyErr,
+  shouldEventuallyReject,
+  shouldBeAssignable,
+};
 
 async function shouldEventuallyOk<TValue>(
   result: Result<unknown, unknown>,
@@ -38,6 +43,19 @@ async function shouldEventuallyErr<TValue>(
     }
   } else {
     done(`Err result expected (${value}), got Ok result`);
+  }
+}
+
+async function shouldEventuallyReject<TValue>(
+  result: Result<unknown, unknown>,
+  value: TValue,
+  done: (err?: any) => void
+): Promise<void> {
+  try {
+    await result.unsafePromise();
+    done(`Reject promise result expected (${value}), but promise resolve`);
+  } catch (err) {
+    done();
   }
 }
 
