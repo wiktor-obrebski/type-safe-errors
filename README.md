@@ -58,7 +58,7 @@ authorizeUser('admin', 'admin')
   })
   // Handle error in case of invalid credentials
   .mapErr(InvalidCredentialsError, (err) => {
-    // err is fully typed err object (InvalidCredentialsError class instance)
+    // here `err` is fully typed object of InvalidCredentialsError class
     console.log('Invalid credentials!', err);
   })
   // Map the result to classic promise
