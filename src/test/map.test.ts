@@ -1095,7 +1095,7 @@ suite('mapErr', () => {
 
     const mapped: Ok<number> | Ok<'mapped-unknown-err-result'> | Err<Error1> =
       result.mapErr(UnknownError, (err: UnknownError) => {
-        expect(err.errCause).to.equal(err4);
+        expect(err.cause).to.equal(err4);
         return 'mapped-unknown-err-result' as const;
       });
 
