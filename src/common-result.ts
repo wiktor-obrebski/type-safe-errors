@@ -16,8 +16,11 @@ export {
 class UnknownError extends Error implements UnknownErrorType {
   name = '__UnknownError' as const;
 
-  constructor(public errCause: unknown) {
+  cause?: unknown;
+
+  constructor(cause: unknown) {
     super();
+    this.cause = cause;
   }
 }
 
@@ -90,7 +93,7 @@ const CommonResultPrototype: CommonResult<unknown> = {
       if (wrapper.isError) {
         return Promise.reject(
           wrapper.value instanceof UnknownError
-            ? wrapper.value.errCause
+            ? wrapper.value.cause
             : wrapper.value
         );
       }

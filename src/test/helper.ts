@@ -63,7 +63,7 @@ async function shouldEventuallyUnknownErr(
   try {
     expect(wrapper.value).instanceOf(UnknownError);
     if (wrapper.value instanceof UnknownError) {
-      expect(wrapper.value.errCause).to.equal(err);
+      expect(wrapper.value.cause).to.equal(err);
       return done();
     }
 
