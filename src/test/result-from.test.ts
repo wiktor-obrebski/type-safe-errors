@@ -1,5 +1,9 @@
 import { Result, Ok, Err } from '../index';
-import { shouldEventuallyOk, shouldEventuallyErr, shouldEventuallyReject } from './helper';
+import {
+  shouldEventuallyOk,
+  shouldEventuallyErr,
+  shouldEventuallyReject,
+} from './helper';
 
 class Error1 {
   name = 'Error1' as const;

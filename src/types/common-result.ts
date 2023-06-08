@@ -9,6 +9,8 @@ import type {
   MapAnyErrResult,
   InferErr,
   SpreadErrors,
+  Err,
+  UnknownError,
 } from './result-helpers';
 
 export type { CommonResult, ResultWrapper };
@@ -22,7 +24,11 @@ interface CommonResult<TErrorOrValue> {
     mapper: OkMapper<U, R>
   ): SpreadErrors<MapOkResult<SpreadErrors<U>, R>>;
 
-  mapErr<U extends Result<unknown, unknown>, R, E extends InferErr<U>>(
+  mapErr<
+    U extends Result<unknown, unknown>,
+    R,
+    E extends InferErr<U> | UnknownError
+  >(
     this: U,
     ErrorClass: AClass<E>,
     mapper: (err: E) => R
@@ -30,7 +36,7 @@ interface CommonResult<TErrorOrValue> {
 
   mapAnyErr<U extends Result<unknown, unknown>, R>(
     this: U,
-    mapper: ErrMapper<U, R>
+    mapper: ErrMapper<U | Err<UnknownError>, R>
   ): SpreadErrors<MapAnyErrResult<SpreadErrors<U>, R>>;
 
   unsafePromise<U extends Result<unknown, unknown>>(
