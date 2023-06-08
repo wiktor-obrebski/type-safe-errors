@@ -7,6 +7,8 @@ import type {
 
 import { Result as ResultVal, Ok as OkVal, Err as ErrVal } from './result';
 
+export { UnknownError } from './common-result';
+
 export const Result = ResultVal;
 export type Result<TValue, TError> = ResultType<TValue, TError>;
 
