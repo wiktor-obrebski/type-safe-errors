@@ -20,7 +20,7 @@ export type {
 interface UnknownError extends Error {
   name: '__UnknownError';
 
-  errCause: unknown;
+  cause?: unknown;
 }
 
 type Result<TValue, TError> = Ok<TValue> | Err<TError>;
