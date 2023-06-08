@@ -1,6 +1,7 @@
 import {
   commonResultFactory,
   resultWrapperFactory,
+  unknownErrorWrapperFactory,
   isResult,
 } from './common-result';
 import { ResultNamespace, OkNamespace, ErrNamespace } from './types/result';
@@ -18,7 +19,7 @@ const Result: ResultNamespace = {
           return resultWrapperFactory(result, false);
         }
       })
-      .catch((err) => resultWrapperFactory(err, true));
+      .catch(unknownErrorWrapperFactory);
 
     return commonResultFactory(resultWrapperPromise) as any;
   },
