@@ -1,10 +1,13 @@
 import { expect } from 'chai';
+
 import { Result } from '../types/result-helpers';
+import { UnknownError } from '../common-result';
 
 export {
   shouldEventuallyOk,
   shouldEventuallyErr,
   shouldEventuallyReject,
+  shouldEventuallyUnknownErr,
   shouldBeAssignable,
 };
 
@@ -43,6 +46,30 @@ async function shouldEventuallyErr<TValue>(
     }
   } else {
     done(`Err result expected (${value}), got Ok result`);
+  }
+}
+
+async function shouldEventuallyUnknownErr(
+  result: Result<unknown, unknown>,
+  err: unknown,
+  done: (err?: any) => void
+): Promise<void> {
+  const wrapper = await result.__value;
+
+  if (!wrapper.isError) {
+    done(`UnknownError Err result expected, got Ok result`);
+  }
+
+  try {
+    expect(wrapper.value).instanceOf(UnknownError);
+    if (wrapper.value instanceof UnknownError) {
+      expect(wrapper.value.errCause).to.equal(err);
+      return done();
+    }
+
+    done('Unexpected tests path, should throw before');
+  } catch (err) {
+    done(err);
   }
 }
 

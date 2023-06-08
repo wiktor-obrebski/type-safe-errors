@@ -1,5 +1,12 @@
-import { Result, Ok, Err } from '../index';
-import { shouldEventuallyOk, shouldEventuallyErr } from './helper';
+import { expect } from 'chai';
+
+import { Result, Ok, Err, UnknownError } from '../index';
+import {
+  shouldEventuallyOk,
+  shouldEventuallyErr,
+  shouldEventuallyReject,
+  shouldEventuallyUnknownErr,
+} from './helper';
 
 class Error1 extends Error {
   name = 'Error1' as const;
@@ -39,9 +46,11 @@ suite('Result map of single Ok result', () => {
   test('returns maped result for mapper with err result return', (done) => {
     const err1 = new Error1();
 
-    const mapped: Err<Error1> = result.map((_value: number) => {
-      return Err.of(err1);
-    });
+    const mapped: Err<Error1> | Err<UnknownError> = result.map(
+      (_value: number) => {
+        return Err.of(err1);
+      }
+    );
 
     shouldEventuallyErr(mapped, err1, done);
   });
@@ -83,11 +92,11 @@ suite('Result map of single Ok result', () => {
   test('returns maped result for mapper with promise of err result return', (done) => {
     const err1 = new Error1();
 
-    async function getAsyncOk(_value: number) {
+    async function getAsyncErr(_value: number) {
       return Err.of(err1);
     }
     const mapped: Err<Error1> = result.map(async (value: number) => {
-      const res = await getAsyncOk(value);
+      const res = await getAsyncErr(value);
       return res;
     });
 
@@ -109,6 +118,30 @@ suite('Result map of single Ok result', () => {
     );
 
     shouldEventuallyOk(mapped, 'test-ok', done);
+  });
+
+  test('returns maped UnknownError result if mapper throws an exception', (done) => {
+    const err4 = new Error2();
+
+    const mapped: Ok<number> | Err<Error1> = result.map((_val: number) => {
+      if (true) {
+        throw err4;
+      }
+    });
+
+    shouldEventuallyUnknownErr(mapped, err4, done);
+  });
+
+  test('rejects with throwed exception if mapper throws an exception', (done) => {
+    const err4 = new Error2();
+
+    const mapped: Ok<number> | Err<Error1> = result.map((_val: number) => {
+      if (true) {
+        throw err4;
+      }
+    });
+
+    shouldEventuallyReject(mapped, err4, done);
   });
 });
 
@@ -200,6 +233,16 @@ suite('Result map of Err result should not be affected by', () => {
     const mapped: Err<Error1> = result.map(async (value: never) => {
       const res = await getAsyncOk(value);
       return res;
+    });
+
+    shouldEventuallyErr(mapped, errInstance, done);
+  });
+
+  test('mapper with throws an exception', (done) => {
+    const err1 = new Error1();
+
+    const mapped: Err<Error1> = result.map(async (_value: never) => {
+      throw err1;
     });
 
     shouldEventuallyErr(mapped, errInstance, done);
@@ -305,6 +348,30 @@ suite('Result map of mixed Ok and Err results', () => {
 
     shouldEventuallyOk(mapped, 'test-ok', done);
   });
+
+  test('returns maped UnknownError result if mapper throws an exception', (done) => {
+    const err4 = new Error2();
+
+    const mapped: Ok<number> | Err<Error1> = result.map((_val: number) => {
+      if (true) {
+        throw err4;
+      }
+    });
+
+    shouldEventuallyUnknownErr(mapped, err4, done);
+  });
+
+  test('rejects with throwed exception if mapper throws an exception', (done) => {
+    const err4 = new Error2();
+
+    const mapped: Ok<number> | Err<Error1> = result.map((_val: number) => {
+      if (true) {
+        throw err4;
+      }
+    });
+
+    shouldEventuallyReject(mapped, err4, done);
+  });
 });
 
 suite('Result map of multiple Ok results', () => {
@@ -401,6 +468,34 @@ suite('Result map of multiple Ok results', () => {
     );
 
     shouldEventuallyOk(mapped, 'test-ok', done);
+  });
+
+  test('returns maped UnknownError result if mapper throws an exception', (done) => {
+    const err4 = new Error2();
+
+    const mapped: Ok<number> | Err<Error1> = result.map(
+      (_val: number | string) => {
+        if (true) {
+          throw err4;
+        }
+      }
+    );
+
+    shouldEventuallyUnknownErr(mapped, err4, done);
+  });
+
+  test('rejects with throwed exception if mapper throws an exception', (done) => {
+    const err4 = new Error2();
+
+    const mapped: Ok<number> | Err<Error1> = result.map(
+      (_val: number | string) => {
+        if (true) {
+          throw err4;
+        }
+      }
+    );
+
+    shouldEventuallyReject(mapped, err4, done);
   });
 });
 
@@ -505,6 +600,34 @@ suite('Result map of mixed Ok and 2 Err results', () => {
 
     shouldEventuallyOk(mapped, 'test-ok', done);
   });
+
+  test('returns maped UnknownError result if mapper throws an exception', (done) => {
+    const err4 = new Error3();
+
+    const mapped: Ok<number> | Err<Error1> | Err<Error2> = result.map(
+      (_val: number) => {
+        if (true) {
+          throw err4;
+        }
+      }
+    );
+
+    shouldEventuallyUnknownErr(mapped, err4, done);
+  });
+
+  test('rejects with throwed exception if mapper throws an exception', (done) => {
+    const err4 = new Error3();
+
+    const mapped: Ok<number> | Err<Error1> | Err<Error2> = result.map(
+      (_val: number) => {
+        if (true) {
+          throw err4;
+        }
+      }
+    );
+
+    shouldEventuallyReject(mapped, err4, done);
+  });
 });
 
 suite('Result map of multiple Err results should not be affected by', () => {
@@ -602,6 +725,18 @@ suite('Result map of multiple Err results should not be affected by', () => {
       async (value: never) => {
         const res = await getAsyncOk(value);
         return res;
+      }
+    );
+
+    shouldEventuallyErr(mapped, errInstance, done);
+  });
+
+  test('mapper with throws an exception', (done) => {
+    const err1 = new Error1();
+
+    const mapped: Err<Error1> | Err<Error2> = result.map(
+      async (_value: never) => {
+        throw err1;
       }
     );
 
@@ -719,20 +854,47 @@ suite('Result map of mixed 2 Ok and 2 Err results', () => {
     shouldEventuallyOk(mapped, 'test-ok', done);
   });
 
-  test('returns err result of the exception if mapper throw an exception', (done) => {
+  test('rejects with throwed exception if mapper throws an exception', (done) => {
     const err4 = new Error2();
 
     const result = Ok.of(5) as Err<Error1> | Ok<number>;
 
-    // the throwed error type is not and can not be included in result types.
-    // typescript do not support throwed error type following
+    // the throwed error type is included in result types always, as UnknownError
     const mapped: Ok<number> | Err<Error1> = result.map((_val: number) => {
       if (true) {
         throw err4;
       }
     });
 
-    shouldEventuallyErr(mapped, err4, done);
+    shouldEventuallyReject(mapped, err4, done);
+  });
+
+  test('returns maped UnknownError result if mapper throws an exception', (done) => {
+    const err4 = new Error3();
+
+    const mapped: Ok<number> | Err<Error1> | Err<Error2> = result.map(
+      (_val: string | number) => {
+        if (true) {
+          throw err4;
+        }
+      }
+    );
+
+    shouldEventuallyUnknownErr(mapped, err4, done);
+  });
+
+  test('rejects with throwed exception if mapper throws an exception', (done) => {
+    const err4 = new Error3();
+
+    const mapped: Ok<number> | Err<Error1> | Err<Error2> = result.map(
+      (_val: number | string) => {
+        if (true) {
+          throw err4;
+        }
+      }
+    );
+
+    shouldEventuallyReject(mapped, err4, done);
   });
 });
 
@@ -741,7 +903,7 @@ suite('mapAnyErr', () => {
     const result = Ok.of(5) as Ok<number> | Err<Error1> | Err<Error2>;
 
     const mapped: Ok<number> | Ok<'test-return'> = result.mapAnyErr(
-      (_value: Error1 | Error2) => {
+      (_value: Error1 | Error2 | UnknownError) => {
         return 'test-return' as const;
       }
     );
@@ -753,7 +915,7 @@ suite('mapAnyErr', () => {
     const err1 = new Error1();
     const result = Err.of(err1) as Err<Error1> | Ok<number>;
     const mapped: Ok<number> | Ok<'test-return'> = result.mapAnyErr(
-      (_err: Error1) => {
+      (_err: Error1 | UnknownError) => {
         return 'test-return' as const;
       }
     );
@@ -765,9 +927,11 @@ suite('mapAnyErr', () => {
     const err1 = new Error1();
 
     const result = Err.of(err1) as Err<Error1> | Ok<number>;
-    const mapped: Ok<number> = result.mapAnyErr((_err: Error1) => {
-      return Ok.of(25);
-    });
+    const mapped: Ok<number> = result.mapAnyErr(
+      (_err: Error1 | UnknownError) => {
+        return Ok.of(25);
+      }
+    );
 
     shouldEventuallyOk(mapped, 25, done);
   });
@@ -778,7 +942,7 @@ suite('mapAnyErr', () => {
 
     const result = Err.of(err1) as Err<Error1> | Ok<number>;
     const mapped: Ok<number> | Err<Error2> = result.mapAnyErr(
-      (_err: Error1) => {
+      (_err: Error1 | UnknownError) => {
         return Err.of(err2);
       }
     );
@@ -791,30 +955,47 @@ suite('mapAnyErr', () => {
 
     const result = Err.of(err1) as Err<Error1 | Error3> | Ok<number>;
 
-    const mapped: Ok<number> | Err<Error1> | Err<Error3> = result.mapAnyErr(
-      (err: Error1 | Error3) => {
+    const mapped: Ok<number> | Err<Error1> | Err<Error3> | Err<UnknownError> =
+      result.mapAnyErr((err: Error1 | Error3 | UnknownError) => {
         return Err.of(err);
-      }
-    );
+      });
 
     shouldEventuallyErr(mapped, err1, done);
   });
 
-  test('returns err result of the exception if mapper throw an exception', (done) => {
+  test('returns maped UnknownError result if mapper throws an exception', (done) => {
     const err1 = new Error1();
     const err4 = new Error2();
 
     const result = Err.of(err1) as Err<Error1> | Ok<number>;
 
-    // the throwed error type is not and can not be included in result types.
-    // typescript do not support throwed error type following
-    const mapped: Ok<number> = result.mapAnyErr((_err: Error1) => {
-      if (true) {
-        throw err4;
+    const mapped: Ok<number> = result.mapAnyErr(
+      (_err: Error1 | UnknownError) => {
+        if (true) {
+          throw err4;
+        }
       }
-    });
+    );
 
-    shouldEventuallyErr(mapped, err4, done);
+    shouldEventuallyUnknownErr(mapped, err4, done);
+  });
+
+  test('rejects with throwed exception if mapper throws an exception', (done) => {
+    const err1 = new Error1();
+    const err4 = new Error2();
+
+    const result = Err.of(err1) as Err<Error1> | Ok<number>;
+
+    // the throwed error type is included in result types awalys, as UnknownError
+    const mapped: Ok<number> = result.mapAnyErr(
+      (_err: Error1 | UnknownError) => {
+        if (true) {
+          throw err4;
+        }
+      }
+    );
+
+    shouldEventuallyReject(mapped, err4, done);
   });
 });
 
@@ -894,8 +1075,7 @@ suite('mapErr', () => {
 
       const result = Err.of(err1) as Err<Error1 | Error3> | Ok<number>;
 
-      // const mapped: Ok<number> | Err<Error2> | Err<Error3> = result.mapErr(
-      const mapped = result
+      const mapped: Ok<number> | Ok<void> | Err<Error2> = result
         .mapErr(Error1, (_err: Error1) => {
           return Err.of(err2);
         })
@@ -906,20 +1086,50 @@ suite('mapErr', () => {
     }
   );
 
-  test('returns err result of the exception if mapper throw an exception', (done) => {
+  test('returns maped value for UnknownError err', (done) => {
+    const err4 = new Error('Something happened');
+
+    const result = Result.from(() => {
+      throw err4;
+    }) as Err<Error1> | Ok<number>;
+
+    const mapped: Ok<number> | Ok<'mapped-unknown-err-result'> | Err<Error1> =
+      result.mapErr(UnknownError, (err: UnknownError) => {
+        expect(err.errCause).to.equal(err4);
+        return 'mapped-unknown-err-result' as const;
+      });
+
+    shouldEventuallyOk(mapped, 'mapped-unknown-err-result', done);
+  });
+
+  test('returns maped UnknownError result if mapper throws an exception', (done) => {
     const err1 = new Error1();
     const err4 = new Error2();
 
     const result = Err.of(err1) as Err<Error1> | Ok<number>;
 
-    // the throwed error type is not and can not be included in result types.
-    // typescript do not support throwed error type following
     const mapped: Ok<number> = result.mapErr(Error1, (_err: Error1) => {
       if (true) {
         throw err4;
       }
     });
 
-    shouldEventuallyErr(mapped, err4, done);
+    shouldEventuallyUnknownErr(mapped, err4, done);
+  });
+
+  test('rejects with throwed exception if mapper throws an exception', (done) => {
+    const err1 = new Error1();
+    const err4 = new Error2();
+
+    const result = Err.of(err1) as Err<Error1> | Ok<number>;
+
+    // the throwed error type is included in result types awalys, as UnknownError
+    const mapped: Ok<number> = result.mapErr(Error1, (_err: Error1) => {
+      if (true) {
+        throw err4;
+      }
+    });
+
+    shouldEventuallyReject(mapped, err4, done);
   });
 });

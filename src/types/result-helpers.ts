@@ -14,7 +14,14 @@ export type {
   MapAnyErrResult,
   InferErr,
   SpreadErrors,
+  UnknownError,
 };
+
+interface UnknownError extends Error {
+  name: '__UnknownError';
+
+  errCause: unknown;
+}
 
 type Result<TValue, TError> = Ok<TValue> | Err<TError>;
 
@@ -60,7 +67,11 @@ interface Subresult {
    * @param mapper the function used to map the current Err result, can be async
    * @returns new Result, mapped if current Result is Err of specific class, left unchanged otherwise
    */
-  mapErr<U extends Result<unknown, unknown>, R, E extends InferErr<U>>(
+  mapErr<
+    U extends Result<unknown, unknown>,
+    R,
+    E extends InferErr<U> | UnknownError
+  >(
     this: U,
     ErrorClass: AClass<E>,
     mapper: (err: E) => R
@@ -99,7 +110,7 @@ type InferErr<U extends Result<unknown, unknown>> = U extends Err<infer T>
   : never;
 
 type ErrMapper<U extends Result<unknown, unknown>, R> = (
-  value: InferErr<U>
+  value: InferErr<U> | UnknownError
 ) => R;
 
 type MapFromResult<R> = R extends Result<unknown, unknown>
