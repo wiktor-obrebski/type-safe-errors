@@ -1,8 +1,7 @@
 import {
   commonResultFactory,
   resultWrapperFactory,
-  unknownErrorWrapperFactory,
-  isResult,
+  wrapResultFactory,
 } from './common-result';
 import { ResultNamespace, OkNamespace, ErrNamespace } from './types/result';
 
@@ -10,16 +9,7 @@ export { Ok, OkNamespace, Err, ErrNamespace, Result, ResultNamespace };
 
 const Result: ResultNamespace = {
   from(factory) {
-    const factoryPromise = Promise.resolve().then(factory);
-    const resultWrapperPromise = factoryPromise
-      .then((result) => {
-        if (isResult(result)) {
-          return result.__value;
-        } else {
-          return resultWrapperFactory(result, false);
-        }
-      })
-      .catch(unknownErrorWrapperFactory);
+    const resultWrapperPromise = wrapResultFactory(factory);
 
     return commonResultFactory(resultWrapperPromise) as any;
   },
