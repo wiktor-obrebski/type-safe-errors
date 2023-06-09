@@ -62,6 +62,25 @@ test('Result combine of mixed types per Result returns expected result', (done) 
   shouldEventuallyOk(mapped, ['return-type', 5], done);
 });
 
+test('Result combine of mixed types per Result and Result promises returns expected result', (done) => {
+  const mixedResult1 = Ok.of('return-type') as Err<Error1> | Ok<'return-type'>;
+  const mixedAsycnResult = Promise.resolve(
+    Ok.of('return-type2') as Err<Error2> | Ok<'return-type2'>
+  );
+
+  const mapped: Result<
+    ['return-type', number, number, 'return-type2'],
+    Error1 | Error2
+  > = Result.combine([
+    mixedResult1,
+    Ok.of(5),
+    Promise.resolve(Ok.of(5)),
+    mixedAsycnResult,
+  ]);
+
+  shouldEventuallyOk(mapped, ['return-type', 5, 5, 'return-type2'], done);
+});
+
 test('Result.combine of results with possibly undefined values preserves possibly undefined values', (done) => {
   const result = Result.combine([
     Ok.of<string | undefined>(undefined),
