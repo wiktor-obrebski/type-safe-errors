@@ -8,6 +8,8 @@ import type {
 
 export type { ResultNamespace, OkNamespace, ErrNamespace };
 
+type AnyResult = ResultType<unknown, unknown>;
+
 interface ResultNamespace {
   from<R>(factory: () => R): MapFromResult<R>;
 
@@ -20,7 +22,12 @@ interface ResultNamespace {
    * @param results list of Ok and/or Err Results
    * @returns Result Ok of all input Ok values, or Err Result of one of provided Err values.
    */
-  combine<T extends readonly ResultType<unknown, unknown>[]>(
+  combine<
+    T extends readonly (
+      | AnyResult
+      | Promise<AnyResult>
+    )[]
+  >(
     results: [...T]
   ): SpreadErrors<ResultType<ExtractOkTypes<T>, ExtractErrTypes<T>[number]>>;
 }
@@ -44,26 +51,26 @@ interface ErrNamespace {
 }
 
 // Given a list of Results, this extracts all the different `T` types from that list
-type ExtractOkTypes<T extends readonly ResultType<unknown, unknown>[]> = {
-  [Key in keyof T]: T[Key] extends ResultType<unknown, unknown>
+type ExtractOkTypes<T extends readonly (AnyResult | Promise<AnyResult>)[]> = {
+  [Key in keyof T]: T[Key] extends Awaited<AnyResult>
     ? ExtractOkFromUnion<T[Key]>
     : never;
 };
 
 // Given a list of Results, this extracts all the different `E` types from that list
-type ExtractErrTypes<T extends readonly ResultType<unknown, unknown>[]> = {
-  [Key in keyof T]: T[Key] extends ResultType<unknown, unknown>
+type ExtractErrTypes<T extends readonly (AnyResult | Promise<AnyResult>)[]> = {
+  [Key in keyof T]: T[Key] extends Awaited<AnyResult>
     ? ExtractErrFromUnion<T[Key]>
     : never;
 };
 
 // need to be separated generic type to run it for every element of union T separately
-type ExtractOkFromUnion<T extends ResultType<unknown, unknown>> = T extends Ok<
+type ExtractOkFromUnion<T extends AnyResult> = T extends Ok<
   infer V
 >
   ? V
   : never;
 
 // need to be separated generic type to run it for every element of union T separately
-type ExtractErrFromUnion<T extends ResultType<unknown, unknown>> =
+type ExtractErrFromUnion<T extends AnyResult> =
   T extends Err<infer E> ? E : never;
