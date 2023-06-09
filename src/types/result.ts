@@ -1,11 +1,4 @@
-import type {
-  Result as ResultType,
-  Ok,
-  Err,
-  InferOk,
-  InferErr,
-  Result,
-} from './result-helpers';
+import type { Ok, Err, InferOk, InferErr, Result } from './result-helpers';
 
 export type { ResultNamespace, OkNamespace, ErrNamespace };
 
@@ -26,7 +19,12 @@ interface ResultNamespace {
    * @param results list of Ok and/or Err Results
    * @returns Result Ok of all input Ok values, or Err Result of one of provided Err values.
    */
-  combine<T extends readonly ResultType<unknown, unknown>[]>(
+  combine<
+    T extends readonly (
+      | Result<unknown, unknown>
+      | Promise<Result<unknown, unknown>>
+    )[]
+  >(
     results: [...T]
   ): Combine<T>;
 }
