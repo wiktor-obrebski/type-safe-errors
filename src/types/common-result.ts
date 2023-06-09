@@ -1,16 +1,11 @@
 import type {
   Result,
   Constructor,
-  OkMapper,
-  MapOkResult,
   InferOk,
-  ErrMapper,
-  MapErrResult,
-  MapAnyErrResult,
   InferErr,
-  SpreadErrors,
   Err,
   UnknownError,
+  Ok,
 } from './result-helpers';
 
 export type { CommonResult, ResultWrapper };
@@ -21,8 +16,11 @@ interface CommonResult<TErrorOrValue> {
 
   map<U extends Result<unknown, unknown>, R>(
     this: U,
-    mapper: OkMapper<U, R>
-  ): SpreadErrors<MapOkResult<SpreadErrors<U>, R>>;
+    mapper: (value: InferOk<U>) => R
+  ): Result<
+    U extends Ok<unknown> ? InferOk<R> : never,
+    InferErr<U> | InferErr<R>
+  >;
 
   mapErr<
     U extends Result<unknown, unknown>,
@@ -32,17 +30,27 @@ interface CommonResult<TErrorOrValue> {
     this: U,
     ErrorClass: Constructor<E>,
     mapper: (err: E) => R
-  ): SpreadErrors<MapErrResult<SpreadErrors<U>, R, E>>;
+  ): Result<
+    InferOk<R>,
+    U extends Err<unknown> ? Exclude<InferErr<U>, E> | InferErr<R> : never
+  >;
 
   mapAnyErr<U extends Result<unknown, unknown>, R>(
     this: U,
-    mapper: ErrMapper<U | Err<UnknownError>, R>
-  ): SpreadErrors<MapAnyErrResult<SpreadErrors<U>, R>>;
+    mapper: (value: InferErr<U>) => R
+  ): Result<InferOk<U> | InferOk<R>, InferErr<R>>;
 
   unsafePromise<U extends Result<unknown, unknown>>(
     this: U
   ): Promise<InferOk<U> | never>;
 
+  /**
+   * Return fulfilled promise of current `Ok`` Result value. To use the `promise()`
+   * function you need first handle all known `Err`` result values.
+   * It is possible that it return rejected promise for unknown exceptions.
+   * @returns promise of current Result value - fulfilled if the value is Ok,
+   *          rejected if the was an exception throw in the mapping chain
+   */
   promise<U extends Result<unknown, unknown>>(
     this: U
   ): Promise<InferOk<U> | never>;
