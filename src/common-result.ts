@@ -10,7 +10,7 @@ export {
   isResult,
   commonResultFactory,
   resultWrapperFactory,
-  unknownErrorWrapperFactory,
+  wrapResultFactory,
 };
 
 class UnknownError extends Error implements UnknownErrorType {
@@ -34,16 +34,7 @@ const CommonResultPrototype: CommonResult<unknown> = {
         return wrapper;
       }
 
-      return Promise.resolve()
-        .then(() => mapper(wrapper.value as any))
-        .then((newValue) => {
-          if (isResult(newValue)) {
-            return newValue.__value;
-          } else {
-            return resultWrapperFactory(newValue, false);
-          }
-        })
-        .catch(unknownErrorWrapperFactory);
+      return wrapResultFactory(() => mapper(wrapper.value as any));
     });
     return commonResultFactory(newValWrapperPromise) as any;
   },
@@ -54,16 +45,7 @@ const CommonResultPrototype: CommonResult<unknown> = {
         return wrapper;
       }
 
-      return Promise.resolve()
-        .then(() => mapper(wrapper.value as any))
-        .then((newValue) => {
-          if (isResult(newValue)) {
-            return newValue.__value;
-          } else {
-            return resultWrapperFactory(newValue, false);
-          }
-        })
-        .catch(unknownErrorWrapperFactory);
+      return wrapResultFactory(() => mapper(wrapper.value as any));
     });
     return commonResultFactory(newValWrapperPromise) as any;
   },
@@ -74,16 +56,7 @@ const CommonResultPrototype: CommonResult<unknown> = {
         return wrapper;
       }
 
-      return Promise.resolve()
-        .then(() => mapper(wrapper.value as any))
-        .then((newValue) => {
-          if (isResult(newValue)) {
-            return newValue.__value;
-          } else {
-            return resultWrapperFactory(newValue, false);
-          }
-        })
-        .catch(unknownErrorWrapperFactory);
+      return wrapResultFactory(() => mapper(wrapper.value as any));
     });
     return commonResultFactory(newValWrapperPromise) as any;
   },
@@ -128,4 +101,13 @@ function resultWrapperFactory<TErrorOrValue>(
 
 function unknownErrorWrapperFactory(err: unknown): ResultWrapper<UnknownError> {
   return { value: new UnknownError(err), isError: true };
+}
+
+function wrapResultFactory(valueFactory: () => unknown) {
+  return Promise.resolve()
+    .then(valueFactory)
+    .then((result) =>
+      isResult(result) ? result.__value : resultWrapperFactory(result, false)
+    )
+    .catch(unknownErrorWrapperFactory);
 }

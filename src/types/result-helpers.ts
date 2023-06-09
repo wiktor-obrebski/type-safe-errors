@@ -2,7 +2,7 @@ import type { ResultWrapper } from './common-result';
 
 export type {
   Result,
-  AClass,
+  Constructor,
   Ok,
   OkMapper,
   MapFromResult,
@@ -73,7 +73,7 @@ interface Subresult {
     E extends InferErr<U> | UnknownError
   >(
     this: U,
-    ErrorClass: AClass<E>,
+    ErrorClass: Constructor<E>,
     mapper: (err: E) => R
   ): SpreadErrors<MapErrResult<SpreadErrors<U>, R, E>>;
 
@@ -150,7 +150,7 @@ type MapErrResult<U extends Result<unknown, unknown>, R, E> = U extends Err<
     : U
   : U;
 
-interface AClass<C> {
+interface Constructor<C> {
   new (...args: any[]): C;
 }
 
