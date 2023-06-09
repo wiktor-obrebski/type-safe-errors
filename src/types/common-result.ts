@@ -1,6 +1,6 @@
 import type {
   Result,
-  AClass,
+  Constructor,
   OkMapper,
   MapOkResult,
   InferOk,
@@ -30,7 +30,7 @@ interface CommonResult<TErrorOrValue> {
     E extends InferErr<U> | UnknownError
   >(
     this: U,
-    ErrorClass: AClass<E>,
+    ErrorClass: Constructor<E>,
     mapper: (err: E) => R
   ): SpreadErrors<MapErrResult<SpreadErrors<U>, R, E>>;
 
