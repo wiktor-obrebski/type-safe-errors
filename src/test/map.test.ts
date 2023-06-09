@@ -150,9 +150,11 @@ suite('Result map of Err result should not be affected by', () => {
   const result = Err.of(errInstance);
 
   test('mapper with plain return', (done) => {
-    const mapped: Err<Error1> = result.map((_value: never) => {
-      return 'test-return' as const;
-    });
+    const mapped: Ok<'test-return'> | Err<Error1> = result.map(
+      (_value: never) => {
+        return 'test-return' as const;
+      }
+    );
 
     shouldEventuallyErr(mapped, errInstance, done);
   });
@@ -886,7 +888,7 @@ suite('Result map of mixed 2 Ok and 2 Err results', () => {
   test('rejects with throwed exception if mapper throws an exception', (done) => {
     const err4 = new Error3();
 
-    const mapped: Ok<number> | Err<Error1> | Err<Error2> = result.map(
+    const mapped: Ok<never> | Err<Error1 | Error2> = result.map(
       (_val: number | string) => {
         if (true) {
           throw err4;

@@ -1,21 +1,6 @@
 import type { ResultWrapper } from './common-result';
 
-export type {
-  Result,
-  Constructor,
-  Ok,
-  OkMapper,
-  MapFromResult,
-  MapOkResult,
-  InferOk,
-  Err,
-  ErrMapper,
-  MapErrResult,
-  MapAnyErrResult,
-  InferErr,
-  SpreadErrors,
-  UnknownError,
-};
+export type { Result, Constructor, Ok, Err, InferOk, InferErr, UnknownError };
 
 interface UnknownError extends Error {
   name: '__UnknownError';
@@ -23,7 +8,9 @@ interface UnknownError extends Error {
   cause?: unknown;
 }
 
-type Result<TValue, TError> = Ok<TValue> | Err<TError>;
+type Result<TValue, TError> =
+  | (TValue extends never ? never : Ok<TValue>)
+  | (TError extends never ? never : Err<TError>);
 
 type Ok<TValue> = Subresult & {
   readonly __value: Promise<ResultWrapper<TValue>>;
@@ -56,8 +43,11 @@ interface Subresult {
    */
   map<U extends Result<unknown, unknown>, R>(
     this: U,
-    mapper: OkMapper<U, R>
-  ): SpreadErrors<MapOkResult<SpreadErrors<U>, R>>;
+    mapper: (value: InferOk<U>) => R
+  ): Result<
+    U extends Ok<unknown> ? InferOk<R> : never,
+    InferErr<U> | InferErr<R>
+  >;
 
   /**
    * Map current Result if it's a Err of a specific class.
@@ -75,7 +65,10 @@ interface Subresult {
     this: U,
     ErrorClass: Constructor<E>,
     mapper: (err: E) => R
-  ): SpreadErrors<MapErrResult<SpreadErrors<U>, R, E>>;
+  ): Result<
+    InferOk<R>,
+    U extends Err<unknown> ? Exclude<InferErr<U>, E> | InferErr<R> : never
+  >;
 
   /**
    * Map current Result if it's Err. It's left Ok Result unchanged.
@@ -85,8 +78,8 @@ interface Subresult {
    */
   mapAnyErr<U extends Result<unknown, unknown>, R>(
     this: U,
-    mapper: ErrMapper<U, R>
-  ): SpreadErrors<MapAnyErrResult<SpreadErrors<U>, R>>;
+    mapper: (value: InferErr<U>) => R
+  ): Result<InferOk<U> | InferOk<R>, InferErr<R>>;
 
   /**
    * WARNING: it's not recommended to use this function. consider using `promise()` instead.
@@ -99,63 +92,18 @@ interface Subresult {
   ): Promise<InferOk<U> | never>;
 }
 
-type OkMapper<U extends Result<unknown, unknown>, R> = (value: InferOk<U>) => R;
-
-type InferOk<U extends Result<unknown, unknown>> = U extends Ok<infer T>
+type InferSyncOk<U> = U extends Ok<infer T>
   ? T
-  : never;
-
-type InferErr<U extends Result<unknown, unknown>> = U extends Err<infer T>
-  ? T
-  : never;
-
-type ErrMapper<U extends Result<unknown, unknown>, R> = (
-  value: InferErr<U> | UnknownError
-) => R;
-
-type MapFromResult<R> = R extends Result<unknown, unknown>
-  ? SpreadErrors<R>
-  : R extends Promise<infer S>
-  ? ResultOrOk<S>
-  : ResultOrOk<R>;
-
-type MapOkResult<U extends Result<unknown, unknown>, R> = U extends Ok<unknown>
-  ? R extends Promise<infer S>
-    ? ResultOrOk<S>
-    : ResultOrOk<R>
+  : U extends Err<unknown>
+  ? never
   : U;
+type InferOk<U> = U extends Promise<infer V> ? InferSyncOk<V> : InferSyncOk<U>;
 
-type PromiseValue<TPromise> = TPromise extends Promise<infer T> ? T : TPromise;
-
-type ResultOrOk<R> = R extends Result<unknown, unknown>
-  ? R
-  : Ok<PromiseValue<R>>;
-
-type MapAnyErrResult<
-  U extends Result<unknown, unknown>,
-  R
-> = U extends Err<unknown>
-  ? R extends Promise<infer S>
-    ? ResultOrOk<S>
-    : ResultOrOk<R>
-  : U;
-
-type MapErrResult<U extends Result<unknown, unknown>, R, E> = U extends Err<
-  infer EUnion
->
-  ? E extends EUnion
-    ? R extends Promise<infer S>
-      ? ResultOrOk<S>
-      : ResultOrOk<R>
-    : U
-  : U;
+type InferSyncErr<U> = U extends Err<infer T> ? T : never;
+type InferErr<U> = U extends Promise<infer V>
+  ? InferSyncErr<V>
+  : InferSyncErr<U>;
 
 interface Constructor<C> {
   new (...args: any[]): C;
 }
-
-type SpreadErrors<U extends Result<unknown, unknown>> = U extends Err<infer E>
-  ? E extends unknown
-    ? Err<E>
-    : never
-  : U;
