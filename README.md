@@ -116,7 +116,7 @@ Result.from(() => authorizeUser('admin', 'admin'))
 
 ```
 ## Description
-If you work with rich business logic, it's common to use exceptions in JavaScript to represent different states of the application. The problem with this solution and TypeScript is that when you catch an exception, you lose information about its types.
+If you work with rich business logic, it's common to use exceptions to represent different states of the application. The problem with this solution and TypeScript is that when you catch an exception, you lose information about its types.
 
 Let consider this simplified example from an [express](https://expressjs.com/) controller:
 
@@ -129,9 +129,11 @@ try {
 ```
 
 By looking at this code, you cannot determine what kind of exception can happen.
-Of course, you can check the `payForProduct` body, but what if it's called by other functions? And they call more? For rich business logic, it's unmaintainable to follow all possible custom exceptions just by reading the code.  
+Of course, you can check the `payForProduct` body, but what if it's called by other functions,
+which in turn call additional functions?  
+When dealing with advanced business logic, it becomes difficult to maintain an understanding of all possible scenarios that can lead to errors solely by reading the code.
 
-Because of this, it's common to just return `500` in such cases (`express` does it by default). However, there can be many errors that should be handled differently than a `500` status code. For example:
+That's why it's common to just return `500` in such cases (`express` does it by default). However, there can be many errors that should be handled differently than a `500` status code. For example:
 
  - Maybe the user did not set any address data yet?
  - Maybe the user's cart has expired?
@@ -148,8 +150,6 @@ This is the problem that `type-safe-errors` library is trying to solve.
 
 ### Minimal API
 Keeping the API minimal reduces the learning curve and makes it easier for developers to understand and use the library effectively.
-
-Learning and using `type-safe-errors` should be simple and straightforward. To achieve this, the API must be as simple and intuitive as possible.
 
 It's one of the reasons why the result class is always async (for example, [neverthrow](https://github.com/supermacro/neverthrow) has two different result types, one for synchronous and one for asynchronous results handling).
 
