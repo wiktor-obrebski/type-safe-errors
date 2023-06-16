@@ -3,7 +3,6 @@
 `type-safe-errors` exposes three class-like abstractions: [Ok](#ok), [Err](#err), and [Result](#result).
 
 For an introduction to the type-safe-errors library and its benefits, please refer to the [README](../README.md).  For framework-specific examples, please refer to the [Framework Examples](../examples) directory.
-
 ## Ok
 An `Ok` object represents a valid result of an action.
 
@@ -52,6 +51,20 @@ const okResult = Ok.of(5);
 const doubledOkResult = okResult.map(value => value * 2); 
 ```
 
+Note: If an unexpected error is thrown within the callback function, it will be wrapped in an `UnknownError` and passed to the `mapErr` or `mapAnyErr` function if they are in the chain. If not handled, it will result in a rejected promise.
+
+```ts
+import { Ok, UnknownError } from 'type-safe-errors';
+
+Ok.of(5)
+  .map(val => {
+    throw new Error('Problem!');
+  })
+  .mapErr(UnknownError, err => console.error(err.cause));
+```
+
+
+
 ---
 
 ### ok.mapErr(ErrorClass, callback)
@@ -69,6 +82,20 @@ const okResult = Ok.of(5);
 const sameOkResult = okResult.mapErr(UserNotFoundError, err => 123); 
 
 ```
+
+Note: You can handle unexpected errors that happened before in the Result chain by using `UnknownError` class:
+
+
+```ts
+import { Ok, UnknownError } from 'type-safe-errors';
+
+Ok.of(5)
+  .map(val => {
+    throw new Error('Problem!');
+  })
+  .mapErr(UnknownError, err => console.error(err.cause));
+```
+
 
 ---
 
@@ -88,6 +115,19 @@ const okResult = Ok.of(5);
 // No operation is performed, the original Ok result is returned
 const sameOkResult = okResult.mapAnyErr(err => 123); 
 
+```
+
+Note: If an unexpected error is thrown before in the Result chain, it will be wrapped in an `UnknownError` and passed to this function:
+
+```ts
+import { Ok, UnknownError } from 'type-safe-errors';
+
+Ok.of(5)
+  .map(val => {
+    throw new Error('Problem!');
+  })
+  // error is type `UnknownError`
+  .mapAnyErr(err => console.error(err.cause));
 ```
 
 ---
@@ -359,6 +399,18 @@ const fetchDataOrErrorResult = Result.from(async () => {
 });
 ```
 
+Note: If an unexpected error is thrown within the `resultFactory` function, it will be wrapped in an `UnknownError` and passed to the `mapErr` or `mapAnyErr` function if they are in the chain. If not handled, it will result in a rejected promise.
+
+```ts
+import { Result, UnknownError } from 'type-safe-errors';
+
+Result.from(() => {
+  throw new Error('Problem!');
+})
+  .mapErr(UnknownError, err => console.error(err.cause));
+
+```
+
 ---
 
 ## Results common interface
@@ -481,6 +533,46 @@ const okOfNumber5 = originOk.mapAnyErr(err => 123);
 
 ---
 
+### UnknownError
+`UnknownError` is a special error class used to wrap unexpected errors that are thrown within the `map`, `mapErr`, `mapAnyErr`, or `Result.from` context. It has a `cause` property that contains the original error.
+
+Examples:
+
+```ts
+import { Ok, UnknownError } from 'type-safe-errors';
+import { UserNotFoundError } from './errors';
+
+Ok.of(5)
+  .map(val => {
+    throw new Error('Problem!');
+  })
+  .mapErr(UnknownError, err => {
+    // Logs the original Error('Problem!')
+    console.error(err.cause);  
+  });
+
+
+Err.of(new UserNotFoundError())
+  .mapErr(UserNotFoundError, err => {
+    throw new Error('Problem!');
+  })
+  .mapErr(UnknownError, err => {
+    // Logs the original Error('Problem!')
+    console.error(err.cause);  
+  });
+
+
+Err.of(new UserNotFoundError())
+  .mapErr(UserNotFoundError, err => {
+    throw new Error('Problem!');
+  })
+  .mapAnyErr(err => {
+    // Logs the original Error('Problem!')
+    console.error(err.cause);  
+  });
+```
+
+
 ### result.unsafePromise()
 
 Map any result to a [promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise). 
@@ -515,3 +607,4 @@ async function promiseResolver() {
 ```
 
 ---
+
