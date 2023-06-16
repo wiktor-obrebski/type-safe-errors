@@ -293,8 +293,9 @@ const rejectedPromise = errResult.unsafePromise();
 ### Result.combine([result1, result2, ...])
 
 Combines a list of provided results into a single result.
-If all provided results are `Ok`, the returned result will be an `Ok` containing
-an array of values from the provided results: `[Ok<A>, Ok<B>] -> Ok<[A, B]>`.  
+The results can be either `Result` instances or promises that resolve to `Result` instances.
+If all provided results are `Ok`, the returned result
+will be an `Ok` containing an array of values from the provided results: `[Ok<A>, Ok<B>] -> Ok<[A, B]>`.  
 
 If provided results list have at least one `Err` result,
 returned result will be `Err` of first `Err` result value found in the array.
@@ -304,7 +305,9 @@ The `Result.combine` operation is the results version of [Promise.all](https://d
 **Signature:**
 
 ```typescript
-Result.combine(results: [Result<A, Err1>, Result<B, Err2>, ...]): Result<[A, B, ...], Err1 | Err2>
+type AsyncResult<TOk, TErr> = Promise<Result<TOk, TErr>> | Result<TOk, TErr>;
+
+Result.combine(results: [AsyncResult<A, Err1>, AsyncResult<B, Err2>, ...]): Result<[A, B, ...], Err1 | Err2>
 ```
 
 **Examples:**
@@ -315,8 +318,9 @@ Successful example
 import { Ok, Result } from 'type-safe-errors';
 
 const ok1Result = Ok.of(5);
-const ok2Result = Ok.of(9);
-const okSumResult = Result.combine([ok1Result, ok2Result]).map(
+const ok2ResultFactory = async () => Ok.of(9);
+
+const okSumResult = Result.combine([ok1Result, ok2ResultFactory()]).map(
   ([val1, val2]) => val1 + val2
 )
 ```
@@ -333,7 +337,7 @@ const errResult = Err.of(new UserNotFoundError());
 
 const okSumResult = Result.combine([ok1Result, errResult, ok2Result])
   // not called, val2 is `never` type as we already know its an error
-  .map(([val1, val2, val3]) => val1 + val3))
+  .map(([val1, val2, val3]) => val1 + val3)
   // called
   .mapErr(UserNotFoundError, err => console.log('User not found!'))
 ```
@@ -348,11 +352,16 @@ const maybeErr1Result = Ok.of(5).map(
   () => Math.random() > 0.5 ? Err.of(new Error1()) : 5
 );
 
-const maybeErr2Result = Ok.of(6).map(
+const maybeErr2ResultFactory = async () => Ok.of(6).map(
   () => Math.random() > 0.5 ? Err.of(new Error2()) : 6
 );
 
-const okSumResult = Result.combine([ok1Result, maybeErr1Result , ok2Result, maybeErr2Result])
+const okSumResult = Result.combine([
+  ok1Result,
+  maybeErr1Result,
+  ok2Result,
+  maybeErr2ResultFactory()
+])
   // randomly, when all results all success, map will run
   .map(([val1, val5, val2, val6]) => val1 + val5 + val2 + val6)
   // if some of results fail, then mapAnyErr is called. `err` is Error1 or Error2 class
