@@ -8,9 +8,15 @@ interface UnknownError extends Error {
   cause?: unknown;
 }
 
-type Result<TValue, TError> =
+type BaseResult<TValue, TError> =
   | (TValue extends never ? never : Ok<TValue>)
   | (TError extends never ? never : Err<TError>);
+
+type Result<TValue, TError> = BaseResult<TValue, TError> extends never
+  ? // mapping result should never be never, it can be Ok of never if there is
+    // no other Result's known
+    Ok<never>
+  : BaseResult<TValue, TError>;
 
 type Ok<TValue> = Subresult & {
   readonly __value: Promise<ResultWrapper<TValue>>;
