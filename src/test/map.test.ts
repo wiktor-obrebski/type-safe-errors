@@ -132,6 +132,24 @@ suite('Result map of single Ok result', () => {
     shouldEventuallyUnknownErr(mapped, err4, done);
   });
 
+  test('returns maped value for UnknownError err when infering type', (done) => {
+    const err4 = new Error('Something happened');
+
+    const result = Ok.of(5).map((_val) => {
+      throw err4;
+    });
+
+    const mapped: Ok<'mapped-unknown-err-result'> = result.mapErr(
+      UnknownError,
+      (err: UnknownError) => {
+        expect(err.cause).to.equal(err4);
+        return 'mapped-unknown-err-result' as const;
+      }
+    );
+
+    shouldEventuallyOk(mapped, 'mapped-unknown-err-result', done);
+  });
+
   test('rejects with throwed exception if mapper throws an exception', (done) => {
     const err4 = new Error2();
 
@@ -965,6 +983,24 @@ suite('mapAnyErr', () => {
     shouldEventuallyErr(mapped, err1, done);
   });
 
+  test('returns maped value for UnknownError err when infering type', (done) => {
+    const err4 = new Error('Something happened');
+
+    const result = Err.of(new Error1()).mapAnyErr(() => {
+      throw err4;
+    });
+
+    const mapped: Ok<'mapped-unknown-err-result'> = result.mapErr(
+      UnknownError,
+      (err: UnknownError) => {
+        expect(err.cause).to.equal(err4);
+        return 'mapped-unknown-err-result' as const;
+      }
+    );
+
+    shouldEventuallyOk(mapped, 'mapped-unknown-err-result', done);
+  });
+
   test('returns maped UnknownError result if mapper throws an exception', (done) => {
     const err1 = new Error1();
     const err4 = new Error2();
@@ -1088,18 +1124,38 @@ suite('mapErr', () => {
     }
   );
 
+  test('returns maped value for UnknownError err when infering type', (done) => {
+    const err4 = new Error('Something happened');
+
+    const result = Err.of(new Error1()).mapErr(Error1, () => {
+      throw err4;
+    });
+
+    const mapped: Ok<'mapped-unknown-err-result'> = result.mapErr(
+      UnknownError,
+      (err: UnknownError) => {
+        expect(err.cause).to.equal(err4);
+        return 'mapped-unknown-err-result' as const;
+      }
+    );
+
+    shouldEventuallyOk(mapped, 'mapped-unknown-err-result', done);
+  });
+
   test('returns maped value for UnknownError err', (done) => {
     const err4 = new Error('Something happened');
 
     const result = Result.from(() => {
       throw err4;
-    }) as Err<Error1> | Ok<number>;
+    }) as Ok<number>;
 
-    const mapped: Ok<number> | Ok<'mapped-unknown-err-result'> | Err<Error1> =
-      result.mapErr(UnknownError, (err: UnknownError) => {
+    const mapped: Ok<number> | Ok<'mapped-unknown-err-result'> = result.mapErr(
+      UnknownError,
+      (err: UnknownError) => {
         expect(err.cause).to.equal(err4);
         return 'mapped-unknown-err-result' as const;
-      });
+      }
+    );
 
     shouldEventuallyOk(mapped, 'mapped-unknown-err-result', done);
   });
