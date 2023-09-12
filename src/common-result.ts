@@ -64,11 +64,11 @@ const CommonResultPrototype: CommonResult<unknown> = {
   unsafePromise() {
     return this.__value.then((wrapper) => {
       if (wrapper.isError) {
-        return Promise.reject(
+        const originErr =
           wrapper.value instanceof UnknownError
             ? wrapper.value.cause
-            : wrapper.value
-        );
+            : wrapper.value;
+        return Promise.reject(originErr);
       }
 
       return Promise.resolve(wrapper.value);
