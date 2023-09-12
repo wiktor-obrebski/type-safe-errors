@@ -62,7 +62,7 @@ test('Result combine of mixed types per Result returns expected result', (done) 
   shouldEventuallyOk(mapped, ['return-type', 5], done);
 });
 
-test('Result combine of mixed types per Result and Result promises returns expected result', (done) => {
+test('Result combine should return expected result for async/sync mixed results input', (done) => {
   const mixedResult1 = Ok.of('return-type') as Err<Error1> | Ok<'return-type'>;
   const mixedAsycnResult = Promise.resolve(
     Ok.of('return-type2') as Err<Error2> | Ok<'return-type2'>
