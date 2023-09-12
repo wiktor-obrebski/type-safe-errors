@@ -48,7 +48,7 @@ interface CommonResult<TErrorOrValue> {
    * function you need first handle all known `Err`` result values.
    * It is possible that it return rejected promise for unknown exceptions.
    * @returns promise of current Result value - fulfilled if the value is Ok,
-   *          rejected if the was an exception throw in the mapping chain
+   *          rejected if there was an exception thrown anywhere in the mapping chain
    */
   promise<U extends Result<unknown, unknown>>(
     this: U
