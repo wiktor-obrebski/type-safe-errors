@@ -536,8 +536,6 @@ const okOfNumber5 = originOk.mapAnyErr(err => 123);
 ### UnknownError
 `UnknownError` is a special error class used to wrap unexpected errors that are thrown within the `map`, `mapErr`, `mapAnyErr`, or `Result.from` context. It has a `cause` property that contains the original error.
 
-`UnknownError` is the only error which you don't need to handle before using [promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise). The reason is simple even if you do [result.mapErr(ErrorClass, callback)](#resultmaperrerrorclass-callback) with `UnknownError` as first parameter your code could throw an error in handler function anyway. So, you can never be sure that an unexpected error not happen and the library API reflects this.
-
 `UnknownError` is the only error that you're not required to handle before utilizing a [promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise). This is because, even if you invoke [`result.mapErr(ErrorClass, callback)`](#resultmaperrerrorclass-callback) with `UnknownError` as the first parameter, your handler function might still throw an error. Thus, you can never be entirely confident that an unexpected error won't occur, and the library's API acknowledges this reality.
 
 Examples:
