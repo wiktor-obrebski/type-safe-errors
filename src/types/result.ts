@@ -8,7 +8,9 @@ type Combine<Results extends readonly unknown[]> = Result<
 >;
 
 interface ResultNamespace {
-  from<R>(factory: () => R): Result<InferOk<R>, InferErr<R>>;
+  from<R>(
+    factory: () => R | Promise<R>
+  ): R extends Result<unknown, unknown> ? R : Result<InferOk<R>, InferErr<R>>;
 
   /**
    * Combine provided Results list into single Result. If all provided Results
