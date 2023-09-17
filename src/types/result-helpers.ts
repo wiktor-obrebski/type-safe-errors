@@ -85,7 +85,7 @@ interface Subresult {
    */
   mapAnyErr<U extends Result<unknown, unknown>, R>(
     this: U,
-    mapper: (value: InferErr<U>) => R
+    mapper: (value: InferErr<U> | UnknownError) => R
   ): Result<InferOk<U> | InferOk<R>, InferErr<R>>;
 
   /**
