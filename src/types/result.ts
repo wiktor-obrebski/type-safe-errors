@@ -22,12 +22,7 @@ interface ResultNamespace {
    * @param results list of Ok and/or Err Results
    * @returns Result Ok of all input Ok values, or Err Result of one of provided Err values.
    */
-  combine<
-    T extends readonly (
-      | AnyResult
-      | Promise<AnyResult>
-    )[]
-  >(
+  combine<T extends readonly unknown[]>(
     results: [...T]
   ): SpreadErrors<ResultType<ExtractOkTypes<T>, ExtractErrTypes<T>[number]>>;
 }
@@ -50,27 +45,24 @@ interface ErrNamespace {
   of<TError>(error: TError): TError extends unknown ? Err<TError> : never;
 }
 
-// Given a list of Results, this extracts all the different `T` types from that list
-type ExtractOkTypes<T extends readonly (AnyResult | Promise<AnyResult>)[]> = {
-  [Key in keyof T]: T[Key] extends Awaited<AnyResult>
-    ? ExtractOkFromUnion<T[Key]>
-    : never;
+// Given a list of Results, this infer all the different `Ok` types from that list
+type ExtractOkTypes<T extends readonly unknown[]> = {
+  [Key in keyof T]: ExtractOkFromUnion<Awaited<T[Key]>>;
 };
 
-// Given a list of Results, this extracts all the different `E` types from that list
-type ExtractErrTypes<T extends readonly (AnyResult | Promise<AnyResult>)[]> = {
-  [Key in keyof T]: T[Key] extends Awaited<AnyResult>
-    ? ExtractErrFromUnion<T[Key]>
-    : never;
+// Given a list of Results, this infer all the different `Err` types from that list
+type ExtractErrTypes<T extends readonly unknown[]> = {
+  [Key in keyof T]: ExtractErrFromUnion<Awaited<T[Key]>>;
 };
 
 // need to be separated generic type to run it for every element of union T separately
-type ExtractOkFromUnion<T extends AnyResult> = T extends Ok<
-  infer V
->
+type ExtractOkFromUnion<T> = T extends Err<unknown>
+  ? never
+  : T extends Ok<infer V>
   ? V
-  : never;
+  : T;
 
 // need to be separated generic type to run it for every element of union T separately
-type ExtractErrFromUnion<T extends AnyResult> =
-  T extends Err<infer E> ? E : never;
+type ExtractErrFromUnion<T> = T extends Err<infer E>
+  ? E
+  : never;
