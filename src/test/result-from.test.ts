@@ -71,6 +71,19 @@ suite('Result.from of an result factory', () => {
     shouldEventuallyOk(mapped, 'ok of 5', done);
   });
 
+  test('returns maped result for mapper with generic result return', (done) => {
+    const err1 = new Error1();
+
+    const genericFn = <TOk extends never, TResult extends Result<TOk, Error1>>(
+      val: TResult
+    ) => {
+      const mapped: Ok<TOk> | Err<Error1> = Result.from(() => val);
+      shouldEventuallyErr(mapped, err1, done);
+    };
+
+    genericFn(Err.of(err1));
+  });
+
   test('returns maped result for mapper with promise of err result return', (done) => {
     const err1 = new Error1();
 
