@@ -137,8 +137,8 @@ type MapAnyErrResult<
   R
 > = U extends Err<unknown>
   ? R extends Promise<infer S>
-    ? ResultOrOk<S>
-    : ResultOrOk<R>
+    ? ResultOrOk<Exclude<S, Err<UnknownError>>>
+    : ResultOrOk<Exclude<R, Err<UnknownError>>>
   : U;
 
 type MapErrResult<U extends Result<unknown, unknown>, R, E> = U extends Err<
