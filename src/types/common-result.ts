@@ -43,6 +43,13 @@ interface CommonResult<TErrorOrValue> {
     this: U
   ): Promise<InferOk<U> | never>;
 
+  /**
+   * Return fulfilled promise of current `Ok`` Result value. To use the `promise()`
+   * function you need first handle all known `Err`` result values.
+   * It is possible that it return rejected promise for unknown exceptions.
+   * @returns promise of current Result value - fulfilled if the value is Ok,
+   *          rejected if the was an exception throw in the mapping chain
+   */
   promise<U extends Result<unknown, unknown>>(
     this: U
   ): Promise<InferOk<U> | never>;
