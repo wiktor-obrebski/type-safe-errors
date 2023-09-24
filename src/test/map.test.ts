@@ -950,6 +950,19 @@ suite('mapAnyErr', () => {
     shouldEventuallyErr(mapped, err2, done);
   });
 
+  test('returns proxied error value if its an UnknownError result', (done) => {
+    const err1 = new Error1();
+
+    const result = Err.of(err1) as Err<Error1> | Ok<number>;
+    const mapped: Ok<number> | Err<Error1> = result.mapAnyErr(
+      (err: Error1 | UnknownError) => {
+        return Err.of(err);
+      }
+    );
+
+    shouldEventuallyErr(mapped, err1, done);
+  });
+
   test('spread return error types', (done) => {
     const err1 = new Error1();
 
