@@ -2,6 +2,7 @@ import {
   commonResultFactory,
   resultWrapperFactory,
   wrapResultFactory,
+  isResult,
 } from './common-result';
 import { ResultNamespace, OkNamespace, ErrNamespace } from './types/result';
 
@@ -16,7 +17,9 @@ const Result: ResultNamespace = {
 
   combine(results) {
     const wrapperPromises = results.map((res) =>
-      Promise.resolve(res).then((v) => v.__value)
+      Promise.resolve(res).then((v) =>
+        isResult(v) ? v.__value : { isError: false, value: v }
+      )
     );
 
     const resultPromise = Promise.all(wrapperPromises).then((wrappers) => {
