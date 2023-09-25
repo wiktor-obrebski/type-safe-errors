@@ -3,6 +3,7 @@ import {
   shouldEventuallyOk,
   shouldEventuallyErr,
   shouldEventuallyReject,
+  shouldEventuallyUnknownErr,
 } from './helper';
 
 class Error1 {
@@ -10,7 +11,7 @@ class Error1 {
 }
 
 suite('Result.from of an result factory', () => {
-  test('returns maped result for mapper with plain return', (done) => {
+  test('returns mapped result for mapper with plain return', (done) => {
     const mapped: Ok<'test-return'> = Result.from(() => {
       return 'test-return' as const;
     });
@@ -18,7 +19,7 @@ suite('Result.from of an result factory', () => {
     shouldEventuallyOk(mapped, 'test-return', done);
   });
 
-  test('returns maped result for mapper with ok result return', (done) => {
+  test('returns mapped result for mapper with ok result return', (done) => {
     const mapped: Ok<'test-return2'> = Result.from(() => {
       return Ok.of('test-return2' as const);
     });
@@ -26,7 +27,7 @@ suite('Result.from of an result factory', () => {
     shouldEventuallyOk(mapped, 'test-return2', done);
   });
 
-  test('returns maped result for mapper with err result return', (done) => {
+  test('returns mapped result for mapper with err result return', (done) => {
     const err1 = new Error1();
 
     const mapped: Err<Error1> = Result.from(() => {
@@ -36,7 +37,7 @@ suite('Result.from of an result factory', () => {
     shouldEventuallyErr(mapped, err1, done);
   });
 
-  test('returns maped result for mapper with mixed result return', (done) => {
+  test('returns mapped result for mapper with mixed result return', (done) => {
     const err1 = new Error1();
     const value = 5;
 
@@ -47,7 +48,7 @@ suite('Result.from of an result factory', () => {
     shouldEventuallyOk(mapped, 'test-ok', done);
   });
 
-  test('returns maped result for mapper with promise of plain return', (done) => {
+  test('returns mapped result for mapper with promise of plain return', (done) => {
     async function getAsyncOk(value: number) {
       return `value of ${value}`;
     }
@@ -59,7 +60,7 @@ suite('Result.from of an result factory', () => {
     shouldEventuallyOk(mapped, 'value of 5', done);
   });
 
-  test('returns maped result for mapper with promise of ok result return', (done) => {
+  test('returns mapped result for mapper with promise of ok result return', (done) => {
     async function getAsyncOk(value: number) {
       return Ok.of(`ok of ${value}`);
     }
@@ -71,7 +72,7 @@ suite('Result.from of an result factory', () => {
     shouldEventuallyOk(mapped, 'ok of 5', done);
   });
 
-  test('returns maped result for mapper with generic result return', (done) => {
+  test('returns mapped result for mapper with generic result return', (done) => {
     const err1 = new Error1();
 
     const genericFn = <TOk extends never, TResult extends Result<TOk, Error1>>(
@@ -84,7 +85,7 @@ suite('Result.from of an result factory', () => {
     genericFn(Err.of(err1));
   });
 
-  test('returns maped result for mapper with promise of err result return', (done) => {
+  test('returns mapped result for mapper with promise of err result return', (done) => {
     const err1 = new Error1();
 
     async function getAsyncErr(_value: number) {
@@ -98,7 +99,7 @@ suite('Result.from of an result factory', () => {
     shouldEventuallyErr(mapped, err1, done);
   });
 
-  test('returns maped result for mapper with mixed result return', (done) => {
+  test('returns mapped result for mapper with mixed result return', (done) => {
     const err1 = new Error1();
 
     async function getAsyncResult(value: number) {
@@ -127,5 +128,21 @@ suite('Result.from of an result factory', () => {
     });
 
     shouldEventuallyReject(mapped, 'Something goes wrong', done);
+  });
+
+  test('returns maped value if from throws an exception', (done) => {
+    const err4 = new Error('Something happened');
+
+    const result = Result.from(() => {
+      throw err4;
+    });
+
+    const mapped: Ok<'mapped-unknown-err-result'> = result.map(
+      () => {
+        return 'mapped-unknown-err-result' as const;
+      }
+    );
+
+    shouldEventuallyUnknownErr(mapped, err4, done);
   });
 });
