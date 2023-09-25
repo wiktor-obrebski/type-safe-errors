@@ -114,40 +114,28 @@ type ErrMapper<U extends Result<unknown, unknown>, R> = (
   value: InferErr<U> | UnknownError
 ) => R;
 
-type MapFromResult<R> = R extends Result<unknown, unknown>
-  ? SpreadErrors<R>
-  : R extends Promise<infer S>
-  ? ResultOrOk<S>
-  : ResultOrOk<R>;
+type MapFromResult<R> = SpreadErrors<ResultOrOk<Awaited<R>>>;
 
 type MapOkResult<U extends Result<unknown, unknown>, R> = U extends Ok<unknown>
-  ? R extends Promise<infer S>
-    ? ResultOrOk<S>
-    : ResultOrOk<R>
+  ? ResultOrOk<Awaited<R>>
   : U;
 
-type PromiseValue<TPromise> = TPromise extends Promise<infer T> ? T : TPromise;
-
-type ResultOrOk<R> = R extends Result<unknown, unknown>
+type ResultOrOk<R> = [R] extends [never]
+  ? Ok<never>
+  : R extends Result<unknown, unknown>
   ? R
-  : Ok<PromiseValue<R>>;
+  : Ok<Awaited<R>>;
 
 type MapAnyErrResult<
   U extends Result<unknown, unknown>,
   R
-> = U extends Err<unknown>
-  ? R extends Promise<infer S>
-    ? ResultOrOk<Exclude<S, Err<UnknownError>>>
-    : ResultOrOk<Exclude<R, Err<UnknownError>>>
-  : U;
+> = U extends Err<unknown> ? ResultOrOk<Exclude<R, Err<UnknownError>>> : U;
 
 type MapErrResult<U extends Result<unknown, unknown>, R, E> = U extends Err<
   infer EUnion
 >
   ? E extends EUnion
-    ? R extends Promise<infer S>
-      ? ResultOrOk<S>
-      : ResultOrOk<R>
+    ? ResultOrOk<Awaited<R>>
     : U
   : U;
 
