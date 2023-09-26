@@ -124,7 +124,9 @@ type MapOkResult<U extends Result<unknown, unknown>, R> = U extends Ok<unknown>
   ? ResultOrOk<SimpleAwaited<R>>
   : U;
 
-type ResultOrOk<R> = R extends Result<unknown, unknown>
+type ResultOrOk<R> = [R] extends [never]
+  ? Ok<never>
+  : R extends Result<unknown, unknown>
   ? R
   : Ok<SimpleAwaited<R>>;
 
