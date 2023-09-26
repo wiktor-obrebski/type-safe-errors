@@ -150,6 +150,24 @@ suite('Result map of single Ok result', () => {
     shouldEventuallyOk(mapped, 'mapped-unknown-err-result', done);
   });
 
+  test('returns mapped value for UnknownError err when infering type from async throwing result', (done) => {
+    const err4 = new Error('Something happened');
+
+    const result = Ok.of(5).map(async (_val) => {
+      throw err4;
+    });
+
+    const mapped: Ok<'mapped-unknown-err-result'> = result.mapErr(
+      UnknownError,
+      (err: UnknownError) => {
+        expect(err.cause).to.equal(err4);
+        return 'mapped-unknown-err-result' as const;
+      }
+    );
+
+    shouldEventuallyOk(mapped, 'mapped-unknown-err-result', done);
+  });
+
   test('rejects with throwed exception if mapper throws an exception', (done) => {
     const err4 = new Error2();
 
@@ -994,10 +1012,28 @@ suite('mapAnyErr', () => {
     shouldEventuallyErr(mapped, err1, done);
   });
 
-  test('returns mapped value for UnknownError err when infering type', (done) => {
+  test('returns mapped value for UnknownError err when mapper throws', (done) => {
     const err4 = new Error('Something happened');
 
     const result = Err.of(new Error1()).mapAnyErr(() => {
+      throw err4;
+    });
+
+    const mapped: Ok<'mapped-unknown-err-result'> = result.mapErr(
+      UnknownError,
+      (err: UnknownError) => {
+        expect(err.cause).to.equal(err4);
+        return 'mapped-unknown-err-result' as const;
+      }
+    );
+
+    shouldEventuallyOk(mapped, 'mapped-unknown-err-result', done);
+  });
+
+  test('returns mapped value for UnknownError err when async mapper throws', (done) => {
+    const err4 = new Error('Something happened');
+
+    const result = Err.of(new Error1()).mapAnyErr(async () => {
       throw err4;
     });
 
@@ -1135,10 +1171,28 @@ suite('mapErr', () => {
     }
   );
 
-  test('returns mapped value for UnknownError err when infering type', (done) => {
+  test('returns mapped value for UnknownError err when mapper throws', (done) => {
     const err4 = new Error('Something happened');
 
     const result = Err.of(new Error1()).mapErr(Error1, () => {
+      throw err4;
+    });
+
+    const mapped: Ok<'mapped-unknown-err-result'> = result.mapErr(
+      UnknownError,
+      (err: UnknownError) => {
+        expect(err.cause).to.equal(err4);
+        return 'mapped-unknown-err-result' as const;
+      }
+    );
+
+    shouldEventuallyOk(mapped, 'mapped-unknown-err-result', done);
+  });
+
+  test('returns mapped value for UnknownError err when async mapper throws', (done) => {
+    const err4 = new Error('Something happened');
+
+    const result = Err.of(new Error1()).mapErr(Error1, async () => {
       throw err4;
     });
 
