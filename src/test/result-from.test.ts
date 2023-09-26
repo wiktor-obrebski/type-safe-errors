@@ -130,10 +130,26 @@ suite('Result.from of an result factory', () => {
     shouldEventuallyReject(mapped, 'Something goes wrong', done);
   });
 
-  test('returns maped value if from throws an exception', (done) => {
+  test('returns maped value for throwing sync mapper', (done) => {
     const err4 = new Error('Something happened');
 
     const result = Result.from(() => {
+      throw err4;
+    });
+
+    const mapped: Ok<'mapped-unknown-err-result'> = result.map(
+      () => {
+        return 'mapped-unknown-err-result' as const;
+      }
+    );
+
+    shouldEventuallyUnknownErr(mapped, err4, done);
+  });
+
+  test('returns maped value for throwing async mapper', (done) => {
+    const err4 = new Error('Something happened');
+
+    const result = Result.from(async () => {
       throw err4;
     });
 
