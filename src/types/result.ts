@@ -4,6 +4,7 @@ import type {
   Err,
   SpreadErrors,
   MapFromResult,
+  SimpleAwaited,
 } from './result-helpers';
 
 export type { ResultNamespace, OkNamespace, ErrNamespace };
@@ -47,12 +48,12 @@ interface ErrNamespace {
 
 // Given a list of Results, this infer all the different `Ok` types from that list
 type ExtractOkTypes<T extends readonly unknown[]> = {
-  [Key in keyof T]: ExtractOkFromUnion<Awaited<T[Key]>>;
+  [Key in keyof T]: ExtractOkFromUnion<SimpleAwaited<T[Key]>>;
 };
 
 // Given a list of Results, this infer all the different `Err` types from that list
 type ExtractErrTypes<T extends readonly unknown[]> = {
-  [Key in keyof T]: ExtractErrFromUnion<Awaited<T[Key]>>;
+  [Key in keyof T]: ExtractErrFromUnion<SimpleAwaited<T[Key]>>;
 };
 
 // need to be separated generic type to run it for every element of union T separately
