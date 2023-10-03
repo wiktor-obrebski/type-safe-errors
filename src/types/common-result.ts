@@ -1,16 +1,15 @@
 import type {
   Result,
   Constructor,
-  OkMapper,
   MapOkResult,
   InferOk,
   ErrMapper,
   MapErrResult,
   MapAnyErrResult,
   InferErr,
-  SpreadErrors,
   Err,
   UnknownError,
+  Normalize,
 } from './result-helpers';
 
 export type { CommonResult, ResultWrapper };
@@ -21,23 +20,19 @@ interface CommonResult<TErrorOrValue> {
 
   map<U extends Result<unknown, unknown>, R>(
     this: U,
-    mapper: OkMapper<U, R>
-  ): SpreadErrors<MapOkResult<SpreadErrors<U>, R>>;
+    mapper: (value: InferOk<U>) => R | Promise<R>
+  ): Normalize<MapOkResult<U, R>>;
 
-  mapErr<
-    U extends Result<unknown, unknown>,
-    R,
-    E extends InferErr<U> | UnknownError
-  >(
+  mapErr<U extends Result<unknown, unknown>, R extends {}, E extends InferErr<U> | UnknownError>(
     this: U,
     ErrorClass: Constructor<E>,
-    mapper: (err: E) => R
-  ): SpreadErrors<MapErrResult<SpreadErrors<U>, R, E>>;
+    mapper: (err: E) => R | Promise<R>
+  ): MapErrResult<U, R, E>;
 
   mapAnyErr<U extends Result<unknown, unknown>, R>(
     this: U,
     mapper: ErrMapper<U | Err<UnknownError>, R>
-  ): SpreadErrors<MapAnyErrResult<SpreadErrors<U>, R>>;
+  ): MapAnyErrResult<U, R>;
 
   unsafePromise<U extends Result<unknown, unknown>>(
     this: U
