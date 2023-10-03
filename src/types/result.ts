@@ -1,15 +1,11 @@
 import type {
-  Result as ResultType,
   Ok,
   Err,
-  SpreadErrors,
   MapFromResult,
   SimpleAwaited,
 } from './result-helpers';
 
 export type { ResultNamespace, OkNamespace, ErrNamespace };
-
-type AnyResult = ResultType<unknown, unknown>;
 
 interface ResultNamespace {
   from<R>(factory: () => R): MapFromResult<R>;
@@ -25,7 +21,7 @@ interface ResultNamespace {
    */
   combine<T extends readonly unknown[]>(
     results: [...T]
-  ): SpreadErrors<ResultType<ExtractOkTypes<T>, ExtractErrTypes<T>[number]>>;
+  ): Ok<ExtractOkTypes<T>> | ExtractErrTypes<T>[number];
 }
 
 interface OkNamespace {
@@ -64,6 +60,4 @@ type ExtractOkFromUnion<T> = T extends Err<unknown>
   : T;
 
 // need to be separated generic type to run it for every element of union T separately
-type ExtractErrFromUnion<T> = T extends Err<infer E>
-  ? E
-  : never;
+type ExtractErrFromUnion<T> = T extends Err<unknown> ? T : never;
