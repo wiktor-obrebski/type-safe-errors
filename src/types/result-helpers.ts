@@ -13,7 +13,6 @@ export type {
   MapAnyErrResult,
   InferErr,
   UnknownError,
-  SimpleAwaited,
 };
 
 interface UnknownError extends Error {
@@ -98,9 +97,6 @@ interface Subresult {
   ): Promise<InferOk<U> | never>;
 }
 
-// build-in awaited is much more complex, often makes the types too deep
-type SimpleAwaited<TPromise> = TPromise extends Promise<infer T> ? T : TPromise;
-
 type InferOk<U> = U extends Ok<infer T> ? T : never;
 
 type InferErr<U> = U extends Err<infer T> ? T : never;
@@ -109,7 +105,7 @@ type ErrMapper<U extends Result<unknown, unknown>, R> = (
   value: InferErr<U> | UnknownError
 ) => R | Promise<R>;
 
-type MapFromResult<R> = ResultOrOk<SimpleAwaited<R>> | Ok<never>;
+type MapFromResult<R> = ResultOrOk<R> | Ok<never>;
 
 type MapOkResult<U, R> = U extends Ok<unknown> ? ResultOrOk<R> | Ok<never> : U;
 
@@ -117,7 +113,7 @@ type MapAnyErrResult<
   U extends Result<unknown, unknown>,
   R
 > = U extends Err<unknown>
-  ? ResultOrOk<Exclude<SimpleAwaited<R>, Err<UnknownError>>> | Ok<never>
+  ? ResultOrOk<Exclude<R, Err<UnknownError>>> | Ok<never>
   : U;
 
 type MapErrResult<U, R, E> = U extends Err<infer EUnion>
