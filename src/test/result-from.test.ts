@@ -30,7 +30,7 @@ suite('Result.from of an result factory', () => {
   test('returns mapped result for mapper with err result return', (done) => {
     const err1 = new Error1();
 
-    const mapped: Err<Error1> = Result.from(() => {
+    const mapped: Err<Error1> | Ok<never> = Result.from(() => {
       return Err.of(err1);
     });
 
@@ -91,7 +91,7 @@ suite('Result.from of an result factory', () => {
     async function getAsyncErr(_value: number) {
       return Err.of(err1);
     }
-    const mapped: Err<Error1> = Result.from(async () => {
+    const mapped: Err<Error1> | Ok<never> = Result.from(async () => {
       const res = await getAsyncErr(5);
       return res;
     });
