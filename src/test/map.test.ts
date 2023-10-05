@@ -46,7 +46,7 @@ suite('Result map of single Ok result', () => {
   test('returns mapped result for mapper with err result return', (done) => {
     const err1 = new Error1();
 
-    const mapped: Err<Error1> | Err<UnknownError> = result.map(
+    const mapped: Err<Error1> | Err<UnknownError> | Ok<never> = result.map(
       (_value: number) => {
         return Err.of(err1);
       }
@@ -95,10 +95,12 @@ suite('Result map of single Ok result', () => {
     async function getAsyncErr(_value: number) {
       return Err.of(err1);
     }
-    const mapped: Err<Error1> = result.map(async (value: number) => {
-      const res = await getAsyncErr(value);
-      return res;
-    });
+    const mapped: Err<Error1> | Ok<never> = result.map(
+      async (value: number) => {
+        const res = await getAsyncErr(value);
+        return res;
+      }
+    );
 
     shouldEventuallyErr(mapped, err1, done);
   });
@@ -309,9 +311,11 @@ suite('Result map of mixed Ok and Err results', () => {
   test('returns mapped result for mapper with err result return', (done) => {
     const err2 = new Error2();
 
-    const mapped: Err<Error2> | Err<Error1> = result.map((_value: number) => {
-      return Err.of(err2);
-    });
+    const mapped: Err<Error2> | Err<Error1> | Ok<never> = result.map(
+      (_value: number) => {
+        return Err.of(err2);
+      }
+    );
 
     shouldEventuallyErr(mapped, err2, done);
   });
@@ -358,7 +362,7 @@ suite('Result map of mixed Ok and Err results', () => {
     async function getAsyncOk(_value: number) {
       return Err.of(err2);
     }
-    const mapped: Err<Error2> | Err<Error1> = result.map(
+    const mapped: Err<Error2> | Err<Error1> | Ok<never> = result.map(
       async (value: number) => {
         const res = await getAsyncOk(value);
         return res;
@@ -432,9 +436,11 @@ suite('Result map of multiple Ok results', () => {
   test('returns mapped result for mapper with err result return', (done) => {
     const err1 = new Error1();
 
-    const mapped: Err<Error1> = result.map((_value: number | string) => {
-      return Err.of(err1);
-    });
+    const mapped: Err<Error1> | Ok<never> = result.map(
+      (_value: number | string) => {
+        return Err.of(err1);
+      }
+    );
 
     shouldEventuallyErr(mapped, err1, done);
   });
@@ -481,10 +487,12 @@ suite('Result map of multiple Ok results', () => {
     async function getAsyncOk(_value: number | string) {
       return Err.of(err1);
     }
-    const mapped: Err<Error1> = result.map(async (value: number | string) => {
-      const res = await getAsyncOk(value);
-      return res;
-    });
+    const mapped: Err<Error1> | Ok<never> = result.map(
+      async (value: number | string) => {
+        const res = await getAsyncOk(value);
+        return res;
+      }
+    );
 
     shouldEventuallyErr(mapped, err1, done);
   });
@@ -559,11 +567,10 @@ suite('Result map of mixed Ok and 2 Err results', () => {
   test('returns mapped result for mapper with err result return', (done) => {
     const err3 = new Error3();
 
-    const mapped: Err<Error3> | Err<Error1> | Err<Error2> = result.map(
-      (_value: number) => {
+    const mapped: Err<Error3> | Err<Error1> | Err<Error2> | Ok<never> =
+      result.map((_value: number) => {
         return Err.of(err3);
-      }
-    );
+      });
 
     shouldEventuallyErr(mapped, err3, done);
   });
@@ -610,12 +617,11 @@ suite('Result map of mixed Ok and 2 Err results', () => {
     async function getAsyncOk(_value: number) {
       return Err.of(err3);
     }
-    const mapped: Err<Error3> | Err<Error1> | Err<Error2> = result.map(
-      async (value: number) => {
+    const mapped: Err<Error3> | Err<Error1> | Err<Error2> | Ok<never> =
+      result.map(async (value: number) => {
         const res = await getAsyncOk(value);
         return res;
-      }
-    );
+      });
 
     shouldEventuallyErr(mapped, err3, done);
   });
@@ -808,11 +814,10 @@ suite('Result map of mixed 2 Ok and 2 Err results', () => {
   test('returns mapped result for mapper with err result return', (done) => {
     const err3 = new Error3();
 
-    const mapped: Err<Error3> | Err<Error1> | Err<Error2> = result.map(
-      (_value: number | string) => {
+    const mapped: Err<Error3> | Err<Error1> | Err<Error2> | Ok<never> =
+      result.map((_value: number | string) => {
         return Err.of(err3);
-      }
-    );
+      });
 
     shouldEventuallyErr(mapped, err3, done);
   });
@@ -863,7 +868,7 @@ suite('Result map of mixed 2 Ok and 2 Err results', () => {
     async function getAsyncOk(_value: number | string) {
       return Err.of(err3);
     }
-    const mapped: Err<Error3> | Err<Error1> | Err<Error2> = result.map(
+    const mapped: Err<Error3> | Err<Error1> | Err<Error2> | Ok<never> = result.map(
       async (value: number | string) => {
         const res = await getAsyncOk(value);
         return res;
@@ -1158,7 +1163,7 @@ suite('mapErr', () => {
       const err1 = new Error1();
       const err2 = new Error2();
 
-      const result = Err.of(err1) as Err<Error1 | Error3> | Ok<number>;
+      const result = Err.of(err1) as Err<Error1> | Err<Error3> | Ok<number>;
 
       const mapped: Ok<number> | Ok<void> | Err<Error2> = result
         .mapErr(Error1, (_err: Error1) => {

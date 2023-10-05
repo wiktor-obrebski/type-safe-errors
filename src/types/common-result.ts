@@ -9,7 +9,6 @@ import type {
   InferErr,
   Err,
   UnknownError,
-  Normalize,
 } from './result-helpers';
 
 export type { CommonResult, ResultWrapper };
@@ -21,9 +20,13 @@ interface CommonResult<TErrorOrValue> {
   map<U extends Result<unknown, unknown>, R>(
     this: U,
     mapper: (value: InferOk<U>) => R | Promise<R>
-  ): Normalize<MapOkResult<U, R>>;
+  ): MapOkResult<U, R>;
 
-  mapErr<U extends Result<unknown, unknown>, R extends {}, E extends InferErr<U> | UnknownError>(
+  mapErr<
+    U extends Result<unknown, unknown>,
+    R extends {},
+    E extends InferErr<U> | UnknownError
+  >(
     this: U,
     ErrorClass: Constructor<E>,
     mapper: (err: E) => R | Promise<R>
