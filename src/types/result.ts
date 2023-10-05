@@ -1,14 +1,9 @@
-import type {
-  Ok,
-  Err,
-  MapFromResult,
-  SimpleAwaited,
-} from './result-helpers';
+import type { Ok, Err, MapFromResult } from './result-helpers';
 
 export type { ResultNamespace, OkNamespace, ErrNamespace };
 
 interface ResultNamespace {
-  from<R>(factory: () => R): MapFromResult<R>;
+  from<R>(factory: () => Promise<R> | R): MapFromResult<R>;
 
   /**
    * Combine provided Results list into single Result. If all provided Results
@@ -44,12 +39,12 @@ interface ErrNamespace {
 
 // Given a list of Results, this infer all the different `Ok` types from that list
 type ExtractOkTypes<T extends readonly unknown[]> = {
-  [Key in keyof T]: ExtractOkFromUnion<SimpleAwaited<T[Key]>>;
+  [Key in keyof T]: ExtractOkFromUnion<Awaited<T[Key]>>;
 };
 
 // Given a list of Results, this infer all the different `Err` types from that list
 type ExtractErrTypes<T extends readonly unknown[]> = {
-  [Key in keyof T]: ExtractErrFromUnion<SimpleAwaited<T[Key]>>;
+  [Key in keyof T]: ExtractErrFromUnion<Awaited<T[Key]>>;
 };
 
 // need to be separated generic type to run it for every element of union T separately
