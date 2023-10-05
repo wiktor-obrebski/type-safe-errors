@@ -14,7 +14,6 @@ export type {
   InferErr,
   UnknownError,
   SimpleAwaited,
-  Normalize,
 };
 
 interface UnknownError extends Error {
@@ -57,7 +56,7 @@ interface Subresult {
   map<U extends Result<unknown, unknown>, R>(
     this: U,
     mapper: (value: InferOk<U>) => R | Promise<R>
-  ): Normalize<MapOkResult<U, R>>;
+  ): MapOkResult<U, R>;
 
   /**
    * Map current Result if it's a Err of a specific class.
@@ -67,7 +66,11 @@ interface Subresult {
    * @param mapper the function used to map the current Err result, can be async
    * @returns new Result, mapped if current Result is Err of specific class, left unchanged otherwise
    */
-  mapErr<U extends Result<unknown, unknown>, R, E extends InferErr<U> | UnknownError>(
+  mapErr<
+    U extends Result<unknown, unknown>,
+    R,
+    E extends InferErr<U> | UnknownError
+  >(
     this: U,
     ErrorClass: Constructor<E>,
     mapper: (err: E) => R | Promise<R>
@@ -106,31 +109,25 @@ type ErrMapper<U extends Result<unknown, unknown>, R> = (
   value: InferErr<U> | UnknownError
 ) => R | Promise<R>;
 
-type MapFromResult<R> = ResultOrOk<SimpleAwaited<R>>;
+type MapFromResult<R> = ResultOrOk<SimpleAwaited<R>> | Ok<never>;
 
-type MapOkResult<U, R> = U extends Ok<unknown>
-  ? ResultOrOk<R>
-  : U;
-
-type ResultOrOk<R> = R extends Result<unknown, unknown> ? R : Ok<R>;
+type MapOkResult<U, R> = U extends Ok<unknown> ? ResultOrOk<R> | Ok<never> : U;
 
 type MapAnyErrResult<
   U extends Result<unknown, unknown>,
   R
 > = U extends Err<unknown>
-  ? ResultOrOk<Exclude<SimpleAwaited<R>, Err<UnknownError>>>
+  ? ResultOrOk<Exclude<SimpleAwaited<R>, Err<UnknownError>>> | Ok<never>
   : U;
 
 type MapErrResult<U, R, E> = U extends Err<infer EUnion>
   ? E extends EUnion
-    ? ResultOrOk<R>
+    ? ResultOrOk<R> | Ok<never>
     : U
   : U;
+
+type ResultOrOk<R> = R extends Result<unknown, unknown> ? R : Ok<R>;
 
 interface Constructor<C> {
   new (...args: any[]): C;
 }
-
-type Normalize<T> = T;
-
-// type Normalize2 = Normalize<never>;
