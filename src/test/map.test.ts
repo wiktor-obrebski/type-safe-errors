@@ -170,7 +170,7 @@ suite('Result map of single Ok result', () => {
     shouldEventuallyOk(mapped, 'mapped-unknown-err-result', done);
   });
 
-  test('rejects with throwed exception if mapper throws an exception', (done) => {
+  test('rejects with thrown exception if mapper throws an exception', (done) => {
     const err4 = new Error2();
 
     const mapped: Ok<number> | Err<Error1> = result.map((_val: number) => {
@@ -401,7 +401,7 @@ suite('Result map of mixed Ok and Err results', () => {
     shouldEventuallyUnknownErr(mapped, err4, done);
   });
 
-  test('rejects with throwed exception if mapper throws an exception', (done) => {
+  test('rejects with thrown exception if mapper throws an exception', (done) => {
     const err4 = new Error2();
 
     const mapped: Ok<number> | Err<Error1> = result.map((_val: number) => {
@@ -528,7 +528,7 @@ suite('Result map of multiple Ok results', () => {
     shouldEventuallyUnknownErr(mapped, err4, done);
   });
 
-  test('rejects with throwed exception if mapper throws an exception', (done) => {
+  test('rejects with thrown exception if mapper throws an exception', (done) => {
     const err4 = new Error2();
 
     const mapped: Ok<number> | Err<Error1> = result.map(
@@ -657,7 +657,7 @@ suite('Result map of mixed Ok and 2 Err results', () => {
     shouldEventuallyUnknownErr(mapped, err4, done);
   });
 
-  test('rejects with throwed exception if mapper throws an exception', (done) => {
+  test('rejects with thrown exception if mapper throws an exception', (done) => {
     const err4 = new Error3();
 
     const mapped: Ok<number> | Err<Error1> | Err<Error2> = result.map(
@@ -895,12 +895,12 @@ suite('Result map of mixed 2 Ok and 2 Err results', () => {
     shouldEventuallyOk(mapped, 'test-ok', done);
   });
 
-  test('rejects with throwed exception if mapper throws an exception', (done) => {
+  test('rejects with thrown exception if mapper throws an exception', (done) => {
     const err4 = new Error2();
 
     const result = Ok.of(5) as Err<Error1> | Ok<number>;
 
-    // the throwed error type is included in result types always, as UnknownError
+    // the thrown error type is included in result types always, as UnknownError
     const mapped: Ok<number> | Err<Error1> = result.map((_val: number) => {
       if (true) {
         throw err4;
@@ -924,7 +924,7 @@ suite('Result map of mixed 2 Ok and 2 Err results', () => {
     shouldEventuallyUnknownErr(mapped, err4, done);
   });
 
-  test('rejects with throwed exception if mapper throws an exception', (done) => {
+  test('rejects with thrown exception if mapper throws an exception', (done) => {
     const err4 = new Error3();
 
     const mapped: Ok<number> | Err<Error1> | Err<Error2> = result.map(
@@ -1070,13 +1070,13 @@ suite('mapAnyErr', () => {
     shouldEventuallyUnknownErr(mapped, err4, done);
   });
 
-  test('rejects with throwed exception if mapper throws an exception', (done) => {
+  test('rejects with thrown exception if mapper throws an exception', (done) => {
     const err1 = new Error1();
     const err4 = new Error2();
 
     const result = Err.of(err1) as Err<Error1> | Ok<number>;
 
-    // the throwed error type is included in result types awalys, as UnknownError
+    // the thrown error type is included in result types awalys, as UnknownError
     const mapped: Ok<number> = result.mapAnyErr(
       (_err: Error1 | UnknownError) => {
         if (true) {
@@ -1243,13 +1243,13 @@ suite('mapErr', () => {
     shouldEventuallyUnknownErr(mapped, err4, done);
   });
 
-  test('rejects with throwed exception if mapper throws an exception', (done) => {
+  test('rejects with thrown exception if mapper throws an exception', (done) => {
     const err1 = new Error1();
     const err4 = new Error2();
 
     const result = Err.of(err1) as Err<Error1> | Ok<number>;
 
-    // the throwed error type is included in result types awalys, as UnknownError
+    // the thrown error type is included in result types awalys, as UnknownError
     const mapped: Ok<number> = result.mapErr(Error1, (_err: Error1) => {
       if (true) {
         throw err4;
