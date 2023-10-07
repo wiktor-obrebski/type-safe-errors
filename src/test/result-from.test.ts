@@ -114,7 +114,7 @@ suite('Result.from of an result factory', () => {
     shouldEventuallyOk(mapped, 'test-ok', done);
   });
 
-  test('returns rejected result for throwing async mapper', (done) => {
+  test('returns rejected result when throwing async mapper', (done) => {
     const mapped: Result<never, never> = Result.from(async () => {
       throw new Error('Something goes wrong');
     });
@@ -122,7 +122,7 @@ suite('Result.from of an result factory', () => {
     shouldEventuallyReject(mapped, 'Something goes wrong', done);
   });
 
-  test('returns rejected result for throwing sync mapper', (done) => {
+  test('returns rejected result when throwing sync mapper', (done) => {
     const mapped: Result<never, never> = Result.from(() => {
       throw new Error('Something goes wrong');
     });
@@ -130,7 +130,7 @@ suite('Result.from of an result factory', () => {
     shouldEventuallyReject(mapped, 'Something goes wrong', done);
   });
 
-  test('returns maped value for throwing sync mapper', (done) => {
+  test('returns mapped value when throwing sync mapper', (done) => {
     const err4 = new Error('Something happened');
 
     const result = Result.from(() => {
@@ -146,7 +146,7 @@ suite('Result.from of an result factory', () => {
     shouldEventuallyUnknownErr(mapped, err4, done);
   });
 
-  test('returns maped value for throwing async mapper', (done) => {
+  test('returns mapped value when throwing async mapper', (done) => {
     const err4 = new Error('Something happened');
 
     const result = Result.from(async () => {
