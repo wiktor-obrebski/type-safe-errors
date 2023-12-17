@@ -1,8 +1,10 @@
-import { Result } from './result';
+import { Result, Err } from './result';
 
 export { resultify };
 
-type Callback<TArgs extends unknown[], TResult> = (...args: TArgs) => TResult;
+type Callback<TArgs extends unknown[], TResult> = (
+  ...args: TArgs
+) => TResult | Promise<TResult>;
 
 const resultify =
   <TArgs extends unknown[], TResult>(fn: Callback<TArgs, TResult>) =>
