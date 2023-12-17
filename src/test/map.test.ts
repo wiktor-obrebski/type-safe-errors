@@ -868,12 +868,11 @@ suite('Result map of mixed 2 Ok and 2 Err results', () => {
     async function getAsyncOk(_value: number | string) {
       return Err.of(err3);
     }
-    const mapped: Err<Error3> | Err<Error1> | Err<Error2> | Ok<never> = result.map(
-      async (value: number | string) => {
+    const mapped: Err<Error3> | Err<Error1> | Err<Error2> | Ok<never> =
+      result.map(async (value: number | string) => {
         const res = await getAsyncOk(value);
         return res;
-      }
-    );
+      });
 
     shouldEventuallyErr(mapped, err3, done);
   });

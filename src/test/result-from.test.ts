@@ -137,11 +137,9 @@ suite('Result.from of an result factory', () => {
       throw err4;
     });
 
-    const mapped: Ok<'mapped-unknown-err-result'> = result.map(
-      () => {
-        return 'mapped-unknown-err-result' as const;
-      }
-    );
+    const mapped: Ok<'mapped-unknown-err-result'> = result.map(() => {
+      return 'mapped-unknown-err-result' as const;
+    });
 
     shouldEventuallyUnknownErr(mapped, err4, done);
   });
@@ -153,11 +151,9 @@ suite('Result.from of an result factory', () => {
       throw err4;
     });
 
-    const mapped: Ok<'mapped-unknown-err-result'> = result.map(
-      () => {
-        return 'mapped-unknown-err-result' as const;
-      }
-    );
+    const mapped: Ok<'mapped-unknown-err-result'> = result.map(() => {
+      return 'mapped-unknown-err-result' as const;
+    });
 
     shouldEventuallyUnknownErr(mapped, err4, done);
   });

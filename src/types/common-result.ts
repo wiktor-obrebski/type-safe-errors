@@ -24,7 +24,7 @@ interface CommonResult<TErrorOrValue> {
 
   mapErr<
     U extends Result<unknown, unknown>,
-    R extends {},
+    R,
     E extends InferErr<U> | UnknownError
   >(
     this: U,

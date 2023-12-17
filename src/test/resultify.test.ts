@@ -1,12 +1,16 @@
 import { Err, Ok } from '../index';
 import { resultify } from '../resultify';
-import { shouldEventuallyOk, shouldEventuallyErr } from './helper';
+import {
+  shouldEventuallyOk,
+  shouldEventuallyErr,
+  shouldEventuallyUnknownErr,
+} from './helper';
 
 class Error2 extends Error {
   name = 'Error2' as const;
 }
 
-suite.only('resultify of a sync function', () => {
+suite('resultify of a sync function', () => {
   test('returns a function that yields `Ok` for a non-`Result` source function', (done) => {
     const value = 5;
     const nonResultReturningFunction = (val: number) => val * val;
@@ -19,8 +23,7 @@ suite.only('resultify of a sync function', () => {
     shouldEventuallyOk(resultifiedValue, 25, done);
   });
 
-  // TODO: enable after rebase
-  test.skip('returns a function that yields `Ok` for a throwing source function', (done) => {
+  test('returns a function that yields `Ok` for a throwing source function', (done) => {
     const err = new Error('Error but typed');
     const errReturningFunction = () => {
       throw err;
@@ -30,7 +33,7 @@ suite.only('resultify of a sync function', () => {
       resultify(errReturningFunction);
     const resultifiedValue = resultifiedFunction();
 
-    shouldEventuallyErr(resultifiedValue, err, done);
+    shouldEventuallyUnknownErr(resultifiedValue, err, done);
   });
 
   test('returns a function that yields `Ok` for an `Ok` source function', (done) => {
@@ -51,7 +54,7 @@ suite.only('resultify of a sync function', () => {
       return Err.of(error);
     };
 
-    const resultifiedFunction: () => Err<Error2> =
+    const resultifiedFunction: () => Ok<never> | Err<Error2> =
       resultify(errReturningFunction);
     const resultifiedValue = resultifiedFunction();
 
@@ -59,7 +62,7 @@ suite.only('resultify of a sync function', () => {
   });
 });
 
-suite.only('resultify of an async function', () => {
+suite('resultify of an async function', () => {
   test('returns a function that yields `Ok` for a non-`Result` source function', (done) => {
     const value = 5;
     const nonResultReturningFunction = async (val: number) => val * val;
@@ -73,7 +76,7 @@ suite.only('resultify of an async function', () => {
   });
 
   // TODO: enable after rebase
-  test.skip('returns a function that yields `Ok` for a throwing source function', (done) => {
+  test('returns a function that yields `Ok` for a throwing source function', (done) => {
     const err = new Error('Error but typed');
     const errReturningFunction = async () => {
       throw err;
@@ -83,7 +86,7 @@ suite.only('resultify of an async function', () => {
       resultify(errReturningFunction);
     const resultifiedValue = resultifiedFunction();
 
-    shouldEventuallyErr(resultifiedValue, err, done);
+    shouldEventuallyUnknownErr(resultifiedValue, err, done);
   });
 
   test('returns a function that yields `Ok` for an `Ok` source function', (done) => {
@@ -104,7 +107,7 @@ suite.only('resultify of an async function', () => {
       return Err.of(error);
     };
 
-    const resultifiedFunction: () => Err<Error2> =
+    const resultifiedFunction: () => Ok<never> | Err<Error2> =
       resultify(errReturningFunction);
     const resultifiedValue = resultifiedFunction();
 
