@@ -422,29 +422,34 @@ Result.from(() => {
 
 ---
 
-## Resultify
-`Resultify` is helper function very similar in work to `Promisify`. It changes return type of function to Result.
+## resultify
+`resultify` is a helper function akin to [Node.js's utils.promisify](https://nodejs.org/api/util.html#utilpromisifyoriginal).
+It modifies the return type of any given function, synchronous or asynchronous, to `Result`.
+
 
 **Examples:**
 
 ```typescript
-import { Result, Err, Resultify } from 'type-safe-errors';
+import { Result, Err, resultify } from 'type-safe-errors';
 
 class FetchFailedError extends Error {
   name = "FetchFailedError" as const;
 }
 
-function fetchDataOrErrorResult () {
+async function fetchDataOrErrorResult () {
   try {
-    const res = fetchRemoteData();
+    const res = await fetchRemoteData();
     return res.data;
   } catch (err) {
+    console.log(err);
     return Err.of(new FetchFailedError());
   }
 };
 
-const fetchRemoteDataAsResult = Resultify(fetchDataOrErrorResult);
-fetchRemoteDataAsResult().map(data => data).mapErr(FetchFailedError, (err) => console.log(err));
+const fetchRemoteDataAsResult = resultify(fetchDataOrErrorResult);
+fetchRemoteDataAsResult()
+  .map(data => data)
+  .mapErr(FetchFailedError, (err) => console.log(err));
 ```
 
 ## Results common interface

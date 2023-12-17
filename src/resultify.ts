@@ -1,4 +1,4 @@
-import { Result, Err } from './result';
+import { Result } from './result';
 
 export { resultify };
 
