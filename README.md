@@ -1,3 +1,7 @@
+[![npm version](https://badgen.net/npm/v/type-safe-errors)](https://badgen.net/npm/v/type-safe-errors)
+[![license](https://badgen.net/npm/license/vast-client)](https://badgen.net/npm/license/vast-client)
+[![bundlejs](https://deno.bundlejs.com/badge?q=type-safe-errors)](https://deno.bundlejs.com/badge?q=type-safe-errors)
+
 # Type-safe errors in TypeScript
 
 ## Overview
