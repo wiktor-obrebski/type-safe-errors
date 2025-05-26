@@ -2,7 +2,7 @@ import { expect, assert } from 'chai';
 import { Ok, Err } from '../index';
 
 class Error1 extends Error {
-  name = 'Error1' as const;
+  private __brand!: never;
 }
 
 test('Result of an Ok value map to a promise of the value', async () => {

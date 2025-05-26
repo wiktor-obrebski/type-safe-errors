@@ -1,13 +1,13 @@
 export { InvalidCVCError, UknownProductError, MissingCardNumberError };
 
 class InvalidCVCError extends Error {
-  name = 'InvalidCVCError' as const;
+  private __brand!: never;
 }
 
 class UknownProductError extends Error {
-  name = 'UknownProductError' as const;
+  private __brand!: never;
 }
 
 class MissingCardNumberError extends Error {
-  name = 'MissingCardNumberError' as const;
+  private __brand!: never;
 }
