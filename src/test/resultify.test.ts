@@ -7,7 +7,7 @@ import {
 } from './helper';
 
 class Error2 extends Error {
-  name = 'Error2' as const;
+  private __brand!: never;
 }
 
 suite('resultify of a sync function', () => {

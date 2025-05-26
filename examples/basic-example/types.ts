@@ -10,9 +10,9 @@ interface Product {
 }
 
 class InvalidCVCError extends Error {
-  name = 'InvalidCVCError' as const;
+  private __brand!: never;
 }
 
 class MissingPriceError extends Error {
-  name = 'MissingPriceError' as const;
+  private __brand!: never;
 }

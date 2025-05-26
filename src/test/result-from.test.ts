@@ -6,8 +6,8 @@ import {
   shouldEventuallyUnknownErr,
 } from './helper';
 
-class Error1 {
-  name = 'Error1' as const;
+class Error1 extends Error {
+  private __brand!: never;
 }
 
 suite('Result.from of an result factory', () => {

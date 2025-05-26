@@ -9,13 +9,15 @@ import {
 } from './helper';
 
 class Error1 extends Error {
-  name = 'Error1' as const;
+  private __brand!: never;
 }
+
 class Error2 extends Error {
-  name = 'Error2' as const;
+  private __brand!: never;
 }
+
 class Error3 extends Error {
-  name = 'Error3' as const;
+  private __brand!: never;
 }
 
 /**

@@ -38,7 +38,7 @@ In this example, we demonstrate how to use the `type-safe-errors` library to han
 import { Ok, Err } from 'type-safe-errors';
 
 class InvalidCredentialsError extends Error {
-  name = 'InvalidCredentialsError' as const;
+  private __brand!: never;
 }
 
 // Function to authorize an user based on their username and password
@@ -80,11 +80,11 @@ There are a few ways to handle this, but the simplest is to use the dedicated he
 import { Ok, Err, Result } from 'type-safe-errors';
 
 class InvalidCredentialsError extends Error {
-  name = 'InvalidCredentialsError' as const;
+  private __brand!: never;
 }
 
 class UserNotFoundError extends Error {
-  name = 'UserNotFoundError' as const;
+  private __brand!: never;
 }
 
 async function authorizeUser(username: string, password: string) {
@@ -191,12 +191,12 @@ An alternative is to abstain from extending by JavaScript [Error](https://develo
 ```ts
 // original
 class InvalidCredentialsError extends Error {
-  name = 'InvalidCredentials' as const;
+  private __brand!: never;
 }
 
 // without Error parent
 class InvalidCredentialsError {
-  name = 'InvalidCredentials' as const;
+  private __brand!: never;
 }
 ```
 

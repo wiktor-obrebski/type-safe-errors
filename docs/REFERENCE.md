@@ -198,11 +198,16 @@ Err.of<TError>(value: TError): Err<TError>
 import { Err } from 'type-safe-errors';
 
 class UserNotFoundError extends Error {
-  name = 'UserNotFoundError' as const;
+  private __brand!: never;
 }
 
 const errResult = Err.of(new UserNotFoundError());
 ```
+
+Error objects must be branded, by e.g.:
+`private __brand!: never;`
+
+Type branding is a technique used to create nominal (distinct) types in TypeScript. By adding a unique dummy private field to a class, you can differentiate it from other types that share the same structure. Without it, many error classes would be indistinguishable from TypeScript's perspective, which could lead to runtime issues.
 
 ---
 
@@ -395,7 +400,7 @@ import { Result, Err } from 'type-safe-errors';
 const fetchOkResult = Result.from(async () => fetchRemoteData());
 
 class FetchFailedError extends Error {
-  name = 'FetchFailedError' as const;
+  private __brand!: never;
 }
 
 const fetchDataOrErrorResult = Result.from(async () => {
@@ -433,7 +438,7 @@ It modifies the return type of any given function, synchronous or asynchronous, 
 import { Result, Err, resultify } from 'type-safe-errors';
 
 class FetchFailedError extends Error {
-  name = "FetchFailedError" as const;
+  private __brand!: never;
 }
 
 async function fetchDataOrErrorResult () {
@@ -478,7 +483,7 @@ Err<TErr>.map<unknown>(callback: (value: never) => never): Err<TErr>;
 import { Ok, Err } from 'type-safe-errors';
 
 class UserNotFoundError extends Error {
-  name = "UserNotFoundError" as const;
+  private __brand!: never;
 }
 
 const okOfNumber5 = Ok.of(10).map(value => value / 2);
