@@ -4,7 +4,7 @@ This file provides guidance for AI assistants working with the **type-safe-error
 
 ## Documentation Location
 
-**For comprehensive AI assistant documentation, see [AGENTS.md](./AGENTS.md)**
+**For comprehensive AI assistant documentation, see @AGENTS.md**
 
 The AGENTS.md file contains:
 - Complete codebase structure and architecture
@@ -54,4 +54,4 @@ npm run build         # Build to dist/
 
 ---
 
-**For complete details, always refer to [AGENTS.md](./AGENTS.md)**
+**For complete details, always refer to @AGENTS.md**
