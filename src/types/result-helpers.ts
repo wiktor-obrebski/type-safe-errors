@@ -54,8 +54,8 @@ interface Subresult {
    */
   map<U extends Result<unknown, unknown>, R>(
     this: U,
-    mapper: (value: InferOk<U>) => R | Promise<R>
-  ): MapOkResult<U, R>;
+    mapper: (value: InferOk<U>) => R
+  ): MapOkResult<U, Awaited<R>>;
 
   /**
    * Map current Result if it's a Err of a specific class.
@@ -72,8 +72,8 @@ interface Subresult {
   >(
     this: U,
     ErrorClass: Constructor<E>,
-    mapper: (err: E) => R | Promise<R>
-  ): MapErrResult<U, R, E>;
+    mapper: (err: E) => R
+  ): MapErrResult<U, Awaited<R>, E>;
 
   /**
    * Map current Result if it's Err. It's left Ok Result unchanged.
