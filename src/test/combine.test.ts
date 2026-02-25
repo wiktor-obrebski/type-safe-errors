@@ -96,7 +96,7 @@ test('Result combine of mixed types per Result and Result promises returns expec
   );
 });
 
-test('Result combine of mixed types per Result and following map should include all errors', (done) => {
+test('Result combine of mixed types per Result and following map of mixed sync/async results should include all errors', (done) => {
   const mixedResults = [
     Ok.of('return-type') as Err<Error1> | Ok<'return-type'>,
   ];
