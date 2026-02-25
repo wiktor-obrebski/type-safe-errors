@@ -19,8 +19,8 @@ interface CommonResult<TErrorOrValue> {
 
   map<U extends Result<unknown, unknown>, R>(
     this: U,
-    mapper: (value: InferOk<U>) => R | Promise<R>
-  ): MapOkResult<U, R>;
+    mapper: (value: InferOk<U>) => R
+  ): MapOkResult<U, Awaited<R>>;
 
   mapErr<
     U extends Result<unknown, unknown>,
@@ -29,8 +29,8 @@ interface CommonResult<TErrorOrValue> {
   >(
     this: U,
     ErrorClass: Constructor<E>,
-    mapper: (err: E) => R | Promise<R>
-  ): MapErrResult<U, R, E>;
+    mapper: (err: E) => R
+  ): MapErrResult<U, Awaited<R>, E>;
 
   mapAnyErr<U extends Result<unknown, unknown>, R>(
     this: U,
