@@ -2,7 +2,7 @@
 [![license](https://badgen.net/npm/license/vast-client)](https://badgen.net/npm/license/vast-client)
 [![bundlejs](https://deno.bundlejs.com/badge?q=type-safe-errors)](https://deno.bundlejs.com/badge?q=type-safe-errors)
 
-# Type-safe errors in TypeScript
+# `type-safe-errors`
 
 ## Overview
 `type-safe-errors` provides custom type-safe errors to Typescript.  
